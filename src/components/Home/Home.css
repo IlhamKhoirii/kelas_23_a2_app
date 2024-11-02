@@ -1,0 +1,164 @@
+/* General Container Styling */
+.home-container {
+    font-family: 'Arial', sans-serif;
+    padding: 20px;
+    background-color: #f8f9fa; /* Light gray background for a clean look */
+}
+
+/* Navbar Styling */
+.navbar-brand h1 {
+    font-size: 1.8rem;
+    color: #333;
+    font-weight: bold;
+}
+
+.navbar {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for navbar */
+}
+
+/* Search Bar */
+.search-bar {
+    flex: 1;
+    max-width: 400px;
+}
+
+.search-bar input {
+    border-radius: 4px 0 0 4px; /* Rounded corners for input */
+}
+
+.search-bar button {
+    border-radius: 0 4px 4px 0; /* Rounded corners for button */
+}
+
+/* Profile Section */
+.profile-section {
+    display: flex;
+    align-items: center;
+}
+
+.profile-picture {
+    margin-right: 8px;
+    border: 2px solid #ddd; /* Add border around profile picture */
+}
+
+.user-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Cart Icon */
+.cart-icon {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.cart-badge {
+    font-size: 12px;
+    line-height: 1;
+    width: 20px; /* Ensures the badge is a perfect circle */
+    height: 20px; /* Ensures the badge is a perfect circle */
+    padding: 0; /* Remove additional padding to keep it circular */
+    background-color: #dc3545; /* Red badge color */
+    color: white;
+    border-radius: 50%; /* Make it perfectly circular */
+    display: flex; /* Use flexbox to center the text */
+    align-items: center; /* Center text vertically */
+    justify-content: center; /* Center text horizontally */
+    position: absolute;
+    top: -5px; /* Adjust positioning as needed */
+    right: -10px; /* Adjust positioning as needed */
+}
+
+/* Category Title */
+.category-section-title h2 {
+    margin-left: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Kategori Section Title */
+.category-section-title h2 {
+    margin-left: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Category Buttons */
+.category-section .category-button {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px auto; /* Center the buttons with some spacing */
+    border-radius: 12px; /* Slightly rounded corners for container */
+    padding: 10px;
+    transition: background-color 0.3s, color 0.3s;
+    max-width: 120px; /* Adjust width to match the size of the image */
+}
+
+/* Category Button Hover */
+.category-section .category-button:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+/* Category Image */
+.category-section .category-image {
+    width: 100px; /* Increased size for larger display */
+    height: 100px;
+    border-radius: 10px; /* Rounded corners for images */
+    margin-bottom: 8px; /* Space between image and text */
+}
+
+/* Category Name */
+.category-section .category-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+
+/* Product Card */
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Hover effect */
+}
+
+.card-title {
+    font-weight: bold;
+    color: #333;
+}
+
+.card-text {
+    color: #555; /* Slightly darker text color for better readability */
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #343a40; /* Dark background for footer */
+    color: white;
+    font-size: 14px;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .category-button {
+        width: 100%; /* Full width buttons on smaller screens */
+        margin-bottom: 10px;
+    }
+    
+    .search-bar {
+        max-width: 100%; /* Search bar takes full width on small screens */
+    }
+}

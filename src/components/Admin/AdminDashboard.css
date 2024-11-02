@@ -1,0 +1,19 @@
+/* src/components/Admin/AdminDashboard.css */
+.admin-dashboard {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding-bottom: 30px;
+}
+
+.admin-dashboard h2 {
+    margin-bottom: 20px;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+}
+
+.btn {
+    font-size: 0.875rem;
+}
