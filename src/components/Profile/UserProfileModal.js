@@ -1,51 +1,66 @@
 // src/components/Profile/UserProfileModal.js
 import React, { useState } from "react";
-import { Modal, Button, Alert } from "react-bootstrap";
+import { Modal, Button, Alert, Container, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import "./UserProfileModal.css";
 
 const UserProfileModal = ({ show, handleClose }) => {
-    const [showLogoutMessage, setShowLogoutMessage] = useState(false); // State for the logout notification
-    const navigate = useNavigate(); // Initialize useNavigate
+    const [showLogoutMessage, setShowLogoutMessage] = useState(false);
+    const navigate = useNavigate();
 
     const handleLogout = () => {
-        // Clear any authentication tokens or session data
-        localStorage.removeItem("authToken"); // Example of clearing a token from localStorage
-        sessionStorage.clear(); // Clear session storage
+        localStorage.removeItem("authToken");
+        sessionStorage.clear();
 
-        // Show logout notification
         setShowLogoutMessage(true);
 
-        // Redirect to the login page after a short delay
         setTimeout(() => {
             navigate("/login");
-            handleClose(); // Close the modal
-        }, 2000); // 2-second delay before redirect
+            handleClose();  // Close the modal after logout
+        }, 2000);
     };
 
     return (
-        <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
+        <Modal show={show} onHide={handleClose} centered> {/* Ensures modal can be closed */}
+            <Modal.Header closeButton> {/* Adds the close button in the header */}
                 <Modal.Title>Profil Pengguna</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p>Selamat datang, John Doe!</p>
-                <div className="modal-links">
-                    <Link to="/edit-profile" onClick={handleClose}>
-                        <Button variant="primary" className="mb-2">Edit Profile</Button>
-                    </Link>
-                    <Link to="/order-history" onClick={handleClose}>
-                        <Button variant="secondary" className="mb-2">Riwayat Pemesanan</Button>
-                    </Link>
-                    {/* Logout Button */}
-                    <Button variant="danger" onClick={handleLogout}>Logout</Button>
-                </div>
+                <Container>
+                    <Row className="text-center">
+                        {/* Edit Profile Button */}
+                        <Col xs={12} className="mb-2">
+                            <Link to="/edit-profile" onClick={handleClose}>
+                                <Button variant="primary" className="w-100">
+                                    Edit Profile
+                                </Button>
+                            </Link>
+                        </Col>
 
-                {/* Notification for successful logout */}
-                {showLogoutMessage && (
-                    <Alert variant="success" className="mt-3 text-center">
-                        Anda berhasil Logout!
-                    </Alert>
-                )}
+                        {/* Order History Button */}
+                        <Col xs={12} className="mb-2">
+                            <Link to="/order-history" onClick={handleClose}>
+                                <Button variant="secondary" className="w-100">
+                                    Riwayat Pemesanan
+                                </Button>
+                            </Link>
+                        </Col>
+
+                        {/* Logout Button */}
+                        <Col xs={12} className="mb-2">
+                            <Button variant="danger" className="w-100" onClick={handleLogout}>
+                                Logout
+                            </Button>
+                        </Col>
+                    </Row>
+
+                    {/* Notification for successful logout */}
+                    {showLogoutMessage && (
+                        <Alert variant="success" className="mt-3 text-center">
+                            Anda berhasil Logout!
+                        </Alert>
+                    )}
+                </Container>
             </Modal.Body>
         </Modal>
     );

@@ -1,5 +1,8 @@
+// src/components/Home/Home.js
 import React, { useState, useContext } from "react";
+import Slider from "react-slick";  // Import Slider from react-slick
 import UserProfileModal from "../Profile/UserProfileModal";
+import ProductDetailModal from "../Product/ProductDetailModal";  // Import the ProductDetailModal
 import {
     Navbar,
     Container,
@@ -16,18 +19,22 @@ import {
 } from "react-bootstrap";
 import { FaSearch, FaShoppingCart, FaUserCircle } from "react-icons/fa";
 import { UserContext } from "../../context/UserContext";
+import { CartContext } from "../../context/CartContext";  // Import CartContext
 import { Link } from "react-router-dom";
 import "./Home.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const Home = () => {
     const { profilePicture } = useContext(UserContext);
+    const { cartItems, addToCart } = useContext(CartContext);  // Access cartItems and addToCart from context
     const [showProfileModal, setShowProfileModal] = useState(false);
-    const [cartItems, setCartItems] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("sembako");
+    const [showProductModal, setShowProductModal] = useState(false);  // State to handle ProductDetailModal visibility
+    const [selectedProduct, setSelectedProduct] = useState(null);     // State to track the selected product
 
     const handleProfileClick = () => setShowProfileModal(true);
     const handleCloseModal = () => setShowProfileModal(false);
-    const addToCart = (product) => setCartItems((prevItems) => [...prevItems, product]);
 
     const products = {
         sembako: [
@@ -53,12 +60,38 @@ const Home = () => {
 
     const handleCategoryClick = (category) => setSelectedCategory(category);
 
+    const handleProductClick = (product) => {
+        setSelectedProduct(product);          // Set selected product data
+        setShowProductModal(true);            // Open the ProductDetailModal
+    };
+
+    const sliderSettings = {
+        dots: true,
+        infinite: false,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        responsive: [
+            {
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: 2,
+                },
+            },
+            {
+                breakpoint: 576,
+                settings: {
+                    slidesToShow: 1,
+                },
+            },
+        ],
+    };
+
     return (
         <div className="home-container">
-            {/* Header Navbar */}
             <Navbar bg="light" expand="lg" className="mb-4">
                 <Container>
-                    <Navbar.Brand href="#"><h1>Toko Kelontong</h1></Navbar.Brand>
+                    <Navbar.Brand href=""><h1>Toko Yenni</h1></Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="ms-auto d-flex align-items-center">
@@ -89,7 +122,6 @@ const Home = () => {
                 </Container>
             </Navbar>
 
-            {/* Moving Carousel */}
             <Carousel className="mb-4">
                 <Carousel.Item>
                     <img className="d-block w-100" src="https://via.placeholder.com/1920x300" alt="First slide" />
@@ -102,44 +134,37 @@ const Home = () => {
                 </Carousel.Item>
             </Carousel>
 
-            {/* Category Title */}
             <Container className="category-section-title mb-4">
                 <h2 className="text-start">Kategori</h2>
             </Container>
 
-            {/* Category Section */}
             <Container className="category-section mb-4">
-                <Row className="text-center my-3">
+                <Slider {...sliderSettings}>
                     {Object.keys(products).map((category) => (
-                        <Col md={4} key={category} className="mb-4">
+                        <div key={category} className="text-center category-slider-item">
                             <Button
                                 variant={selectedCategory === category ? "primary" : "outline-primary"}
                                 onClick={() => handleCategoryClick(category)}
-                                className="category-button w-100"
+                                className="category-button"
                             >
                                 <Image src="https://via.placeholder.com/150" rounded className="category-image mb-2" />
                                 <h5 className="category-name">{category.charAt(0).toUpperCase() + category.slice(1)}</h5>
                             </Button>
-                        </Col>
+                        </div>
                     ))}
-                </Row>
+                </Slider>
             </Container>
 
-            {/* Product List */}
             <Container>
                 <Row>
                     {products[selectedCategory].map((product) => (
                         <Col md={4} key={product.id} className="mb-4">
-                            <Card>
+                            <Card onClick={() => handleProductClick(product)}>  {/* Click to open ProductDetailModal */}
                                 <Card.Img variant="top" src={product.imageUrl} />
                                 <Card.Body>
                                     <Card.Title>{product.name}</Card.Title>
                                     <Card.Text>Harga: Rp{product.price.toLocaleString()}</Card.Text>
                                     <Card.Text>Terjual: {product.sold}</Card.Text>
-                                    <Card.Text>Stok: {product.stock}</Card.Text>
-                                    <Button variant="primary" onClick={() => addToCart(product)}>
-                                        Tambah ke Keranjang
-                                    </Button>
                                 </Card.Body>
                             </Card>
                         </Col>
@@ -147,13 +172,24 @@ const Home = () => {
                 </Row>
             </Container>
 
+            {showProductModal && (
+                <ProductDetailModal
+                    show={showProductModal}
+                    onHide={() => setShowProductModal(false)}
+                    product={selectedProduct}
+                    addToCart={addToCart}  // Pass addToCart function to ProductDetailModal
+                />
+            )}
+
+            {showProfileModal && (
+                <UserProfileModal show={showProfileModal} onHide={handleCloseModal} />
+            )}
+
             {/* Footer */}
-            <footer className="footer mt-4">
+            <footer className="footer">
                 <p>&copy; 2024 Toko Kelontong. All rights reserved.</p>
             </footer>
-
-            {/* User Profile Modal */}
-            <UserProfileModal show={showProfileModal} handleClose={handleCloseModal} />
+            
         </div>
     );
 };

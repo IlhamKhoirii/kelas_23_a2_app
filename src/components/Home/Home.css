@@ -1,7 +1,6 @@
 /* General Container Styling */
 .home-container {
     font-family: 'Arial', sans-serif;
-    padding: 20px;
     background-color: #f8f9fa; /* Light gray background for a clean look */
 }
 
@@ -85,6 +84,12 @@
     color: #333;
 }
 
+/* Jarak antar kategori dalam slider */
+.category-slider-item {
+    margin: 0 10px; /* Berikan jarak horizontal antar item */
+}
+
+
 /* Category Buttons */
 .category-section .category-button {
     text-align: center;
@@ -140,15 +145,6 @@
 
 .card-text {
     color: #555; /* Slightly darker text color for better readability */
-}
-
-/* Footer */
-.footer {
-    text-align: center;
-    padding: 10px;
-    background-color: #343a40; /* Dark background for footer */
-    color: white;
-    font-size: 14px;
 }
 
 /* Responsive Styling */

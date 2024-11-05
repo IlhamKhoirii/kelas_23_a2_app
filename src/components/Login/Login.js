@@ -5,43 +5,50 @@ import "./Login.css";
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState(""); // State to store error messages
     const navigate = useNavigate();
 
     // Mock data for admin and user credentials
-    const adminCredentials = {
-        email: "admin@gmail.com",
-        password: "admin123",
-    };
-
-    const userCredentials = {
-        email: "user@gmail.com",
-        password: "user123",
+    const credentials = {
+        admin: {
+            email: "admin@gmail.com",
+            password: "admin123",
+            role: "admin",
+            redirectPath: "/admin/dashboard",
+            authToken: "adminAuthToken"
+        },
+        user: {
+            email: "user@gmail.com",
+            password: "user123",
+            role: "user",
+            redirectPath: "/home",
+            authToken: "userAuthToken"
+        }
     };
 
     const handleLogin = (e) => {
         e.preventDefault();
 
-        // Check if the email and password match the admin credentials
-        if (email === adminCredentials.email && password === adminCredentials.password) {
-            // Save admin authentication details to local storage
-            localStorage.setItem("authToken", "adminAuthToken"); // Example token for session management
-            localStorage.setItem("userRole", "admin"); // Save role as 'admin'
-
-            // Navigate to the admin dashboard if the credentials match
-            navigate("/admin/dashboard");
-        } 
-        // Check if the email and password match the user credentials
-        else if (email === userCredentials.email && password === userCredentials.password) {
-            // Save user authentication details to local storage
-            localStorage.setItem("authToken", "userAuthToken"); // Example token for session management
-            localStorage.setItem("userRole", "user"); // Save role as 'user'
-
-            // Navigate to the home page if the credentials match
-            navigate("/home");
+        // Check credentials
+        if (email === credentials.admin.email && password === credentials.admin.password) {
+            authenticateUser(credentials.admin);
+        } else if (email === credentials.user.email && password === credentials.user.password) {
+            authenticateUser(credentials.user);
         } else {
-            // If credentials do not match, show an error message
-            alert("Email atau password salah. Silahkan coba lagi.");
+            setErrorMessage("Email atau password salah. Silahkan coba lagi.");
         }
+    };
+
+    const authenticateUser = ({ authToken, role, redirectPath }) => {
+        // Save authentication details in local storage
+        localStorage.setItem("authToken", authToken);
+        localStorage.setItem("userRole", role);
+
+        // Clear any existing error message
+        setErrorMessage("");
+
+        // Navigate to the specified path
+        navigate(redirectPath);
     };
 
     return (
@@ -55,6 +62,7 @@ const Login = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
+                
                 <label>Password</label>
                 <input
                     type="password"
@@ -62,6 +70,9 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
+
+                {errorMessage && <p className="error-message">{errorMessage}</p>}
+
                 <button type="submit">Login</button>
             </form>
             <p>Belum punya akun? <Link to="/register">Register</Link></p>
