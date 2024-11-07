@@ -17,6 +17,11 @@ const Cart = () => {
     const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const [showOverlay, setShowOverlay] = useState(false); // State for showing overlay alert
 
+    // Define handleProfileClick to prevent the error
+    const handleProfileClick = () => {
+        console.log("Profile clicked");
+    };
+
     const handleCheckout = () => {
         if (cartItems.length === 0) {
             setShowOverlay(true);
@@ -39,44 +44,34 @@ const Cart = () => {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="ms-auto d-flex align-items-center">
+                            {/* Navbar Links */}
+                            <Nav.Link as={Link} to="/" className="me-3">Beranda</Nav.Link>
+                            <Nav.Link as={Link} to="/products" className="me-3">Produk</Nav.Link>
+                            <Nav.Link as={Link} to="/store-info" className="me-3">Informasi Toko</Nav.Link>
+
                             {/* Search Bar */}
                             <InputGroup className="me-3 search-bar">
-                                <FormControl
-                                    type="search"
-                                    placeholder="Cari barang..."
-                                    aria-label="Search"
-                                />
+                                <FormControl type="search" placeholder="Cari barang..." aria-label="Search" />
                                 <Button variant="outline-success">
                                     <FaSearch />
                                 </Button>
                             </InputGroup>
-                            
+
                             {/* Profile Section */}
-                            <Nav.Link onClick={() => navigate('/profile')} className="d-flex align-items-center me-3 profile-section">
+                            <Nav.Link onClick={handleProfileClick} className="d-flex align-items-center me-3 profile-section">
                                 {profilePicture ? (
-                                    <Image
-                                        src={profilePicture}
-                                        roundedCircle
-                                        width={32}
-                                        height={32}
-                                        alt="User"
-                                        className="me-2 profile-picture"
-                                    />
+                                    <Image src={profilePicture} roundedCircle width={32} height={32} alt="User" className="me-2 profile-picture" />
                                 ) : (
                                     <FaUserCircle size={32} className="me-2 profile-picture" />
                                 )}
-                                <span className="user-name">{userName || "User"}</span>
+                                <span className="user-name">{userName || 'Evelyn'}</span>
                             </Nav.Link>
 
-                            {/* Cart Icon */}
+                            {/* Cart Icon with Badge */}
                             <Nav.Link as={Link} to="/cart" className="position-relative cart-icon">
                                 <FaShoppingCart size={24} />
                                 {cartItems.length > 0 && (
-                                    <Badge
-                                        pill
-                                        bg="danger"
-                                        className="cart-badge position-absolute top-0 start-100 translate-middle"
-                                    >
+                                    <Badge pill bg="danger" className="cart-badge position-absolute top-0 start-100 translate-middle">
                                         {cartItems.length}
                                     </Badge>
                                 )}
