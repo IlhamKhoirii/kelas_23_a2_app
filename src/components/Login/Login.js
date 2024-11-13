@@ -64,7 +64,7 @@ const Login = () => {
                     required
                 />
                 
-                <label>Password</label>
+                <label>Password   </label>
                 <input
                     type="password"
                     value={password}
