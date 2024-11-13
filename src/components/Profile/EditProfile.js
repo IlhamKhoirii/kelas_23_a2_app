@@ -90,7 +90,6 @@ const EditProfile = () => {
 
             {/* Edit Profile Form */}
             <Container className="mt-4">
-                <h2>Edit Profile</h2>
                 <Form onSubmit={handleSave}>
                     <Form.Group className="mb-3">
                         <Form.Label>Profile Picture</Form.Label>
@@ -104,7 +103,7 @@ const EditProfile = () => {
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formNamaPengguna">
-                        <Form.Label>Nama Pengguna</Form.Label>
+                        <Form.Label>Nama</Form.Label>
                         <Form.Control
                             type="text"
                             value={editedNamaPengguna}
@@ -114,7 +113,7 @@ const EditProfile = () => {
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formEmailPengguna">
-                        <Form.Label>Email Pengguna</Form.Label>
+                        <Form.Label>Email</Form.Label>
                         <Form.Control
                             type="email"
                             value={emailPengguna}
@@ -134,7 +133,7 @@ const EditProfile = () => {
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formAlamatLengkap">
-                        <Form.Label>Alamat Lengkap Pengguna</Form.Label>
+                        <Form.Label>Alamat Lengkap</Form.Label>
                         <Form.Control
                             as="textarea"
                             rows={3}

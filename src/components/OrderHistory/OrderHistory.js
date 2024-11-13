@@ -88,7 +88,7 @@ const OrderHistory = () => {
 
                 {/* Filter Status */}
                 <Container className="mt-4">
-                    <h2>Riwayat Pemesanan</h2>
+                    <h2>Riwayat Pesanan</h2>
                     <div className="d-flex justify-content-start my-3">
                         {["Semua", "Belum Bayar", "Sedang Dikemas", "Dikirim", "Selesai", "Dibatalkan", "Pengembalian Barang"].map((status) => (
                             <Button

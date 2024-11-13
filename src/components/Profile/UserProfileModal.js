@@ -21,7 +21,7 @@ const UserProfileModal = ({ show, handleClose = () => {} }) => {
     return (
         <Modal show={show} onHide={handleClose} centered>
             <Modal.Header closeButton>
-                <Modal.Title>Profil Pengguna</Modal.Title>
+                <Modal.Title>Profil</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Container>
@@ -37,7 +37,7 @@ const UserProfileModal = ({ show, handleClose = () => {} }) => {
                         <Col xs={12} className="mb-2">
                             <Link to="/order-history" onClick={handleClose}>
                                 <Button variant="secondary" className="w-100">
-                                    Riwayat Pemesanan
+                                    Riwayat Pesanan
                                 </Button>
                             </Link>
                         </Col>

@@ -63,24 +63,19 @@ const StoreInfo = () => {
 
             {/* Store Information Content */}
             <div className="store-info-container">
-                <h1 className="store-title">Online Grocery Store</h1>
+                <h1 className="store-title">Informasi Toko</h1>
                 <p className="store-description">
-                    Welcome to our online grocery store! We provide a variety of daily necessities to make your shopping experience easy and convenient.
+                Selamat datang di toko kelontong online kami! Kami menyediakan berbagai kebutuhan sehari-hari untuk membuat pengalaman berbelanja Anda mudah dan nyaman.
                 </p>
                 <p className="delivery-restriction">
-                    <strong>Delivery Coverage:</strong> Currently, we deliver only within the district level. Ensure your address is within this area to place an order.
+                    <strong>Cakupan Pengiriman:</strong> Saat ini, kami hanya melayani pengiriman di tingkat kabupaten. Pastikan alamat Anda berada di dalam area ini untuk melakukan pemesanan.
                 </p>
                 <div className="contact-info">
-                    <h3>Contact Us</h3>
-                    <p>Email: support@yourstore.com</p>
-                    <p>Phone: (123) 456-7890</p>
+                    <h3>Kontak kami</h3>
+                    <p>Email: support@gmail.com</p>
+                    <p>Telepon: (123) 456-7890</p>
                 </div>
             </div>
-
-            {/* Footer */}
-            <footer className="footer">
-                <p>&copy; 2024 Toko Kelontong. All rights reserved.</p>
-            </footer>
 
         </div>
     );

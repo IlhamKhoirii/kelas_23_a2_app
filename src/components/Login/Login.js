@@ -74,7 +74,7 @@ const Login = () => {
 
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-                <button type="submit">Login</button>
+                <button type="submit">Login</button> 
             </form>
             <p>Belum punya akun? <Link to="/register">Register</Link></p>
         </div>
