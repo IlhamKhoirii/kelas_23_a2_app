@@ -1,8 +1,7 @@
 // src/pages/Home/Home.js
 import React, { useState, useContext } from "react";
 import Slider from "react-slick";  // Import Slider from react-slick
-import CategoryList from "../../components/Product/CategoryList";
-import ProductList from "../../components/Product/ProductList";
+
 import UserProfileModal from "../Profile/UserProfileModal";
 import ProductDetailModal from "../Product/ProductDetailModal";  // Import the ProductDetailModal
 import {

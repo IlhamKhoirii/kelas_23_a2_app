@@ -26,6 +26,7 @@ import AdminOrderList from "./pages/Admin/AdminOrderList";
 import AdminSalesReport from "./pages/Admin/AdminSalesReport";
 import AdminFeedback from "./pages/Admin/AdminFeedback";
 import StoreInfo from './pages/StoreInfo/StoreInfo';
+import ProdukToko from './pages/Store/ProdukToko';
 
 const ProtectedRoute = ({
   element,
@@ -63,6 +64,7 @@ function App() {
 
             {/* Public Route for Store Information */}
             <Route path="/store-info" element={<StoreInfo />} />
+            <Route path="/products" element={<ProdukToko />} />
 
             {/* Protected User Routes */}
             <Route
