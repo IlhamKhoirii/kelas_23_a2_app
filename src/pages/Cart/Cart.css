@@ -1,0 +1,57 @@
+.cart-container {
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.cart-title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.cart-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.cart-summary {
+    margin-top: 20px;
+}
+
+.cart-summary h4 {
+    font-weight: bold;
+}
+
+.cart-summary .btn {
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.cart-items .input-group {
+    width: 120px;
+}
+
+.cart-items img {
+    max-height: 80px;
+}
+
+/* Overlay styling */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Ensures it appears above other content */
+}
+
+/* Alert box styling for overlay */
+.overlay-alert {
+    width: 300px;
+    padding: 20px;
+    font-size: 1.2rem;
+}

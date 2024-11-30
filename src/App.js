@@ -11,21 +11,21 @@ import "slick-carousel/slick/slick-theme.css";
 
 import { UserProvider } from "./context/UserContext";
 import { CartProvider } from "./context/CartContext";
-import Home from "./components/Home/Home";
-import Cart from "./components/Cart/Cart";
-import Checkout from "./components/Checkout/Checkout";
-import Login from "./components/Login/Login";
-import Register from "./components/Login/Register";
-import EditProfile from "./components/Profile/EditProfile";
-import OrderHistory from "./components/OrderHistory/OrderHistory";
-import AdminDashboard from "./components/Admin/AdminDashboard";
-import AdminAccount from "./components/Admin/AdminAccount";
-import AdminProductList from "./components/Admin/AdminProductList";
-import AdminUserList from "./components/Admin/AdminUserList";
-import AdminOrderList from "./components/Admin/AdminOrderList";
-import AdminSalesReport from "./components/Admin/AdminSalesReport";
-import AdminFeedback from "./components/Admin/AdminFeedback";
-import StoreInfo from './components/StoreInfo/StoreInfo';
+import Home from "./pages/Home/Home";
+import Cart from "./pages/Cart/Cart";
+import Checkout from "./pages/Checkout/Checkout";
+import Login from "./pages/Login/Login";
+import Register from "./pages/Login/Register";
+import EditProfile from "./pages/Profile/EditProfile";
+import OrderHistory from "./pages/OrderHistory/OrderHistory";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminAccount from "./pages/Admin/AdminAccount";
+import AdminProductList from "./pages/Admin/AdminProductList";
+import AdminUserList from "./pages/Admin/AdminUserList";
+import AdminOrderList from "./pages/Admin/AdminOrderList";
+import AdminSalesReport from "./pages/Admin/AdminSalesReport";
+import AdminFeedback from "./pages/Admin/AdminFeedback";
+import StoreInfo from './pages/StoreInfo/StoreInfo';
 
 const ProtectedRoute = ({
   element,

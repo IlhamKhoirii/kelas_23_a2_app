@@ -1,0 +1,13 @@
+/* UserProfileModal.css */
+.modal-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the buttons horizontally */
+    gap: 12px; /* Add space between each button */
+}
+
+.modal-links button {
+    width: 100%; /* Make all buttons the same width */
+    max-width: 250px; /* Set a maximum width for the buttons */
+    text-align: center; /* Center the text inside the button */
+}

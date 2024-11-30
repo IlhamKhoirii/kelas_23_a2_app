@@ -1,0 +1,142 @@
+/* src/components/Admin/AdminProductList.css */
+
+body {
+    background-color: #f7f8fa;
+    font-family: Arial, sans-serif;
+}
+
+.admin-product-list-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.admin-product-list-container h2 {
+    font-weight: 600;
+    color: #333;
+}
+
+.add-product-button {
+    background-color: #007bff;
+    border: none;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 5px;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.add-product-button:hover {
+    background-color: #0056b3;
+}
+
+.table {
+    margin-top: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+}
+
+.table th {
+    background-color: #f1f3f5;
+    color: #444;
+    font-weight: 600;
+}
+
+.table td {
+    color: #555;
+    vertical-align: middle;
+}
+
+.table img {
+    border-radius: 4px;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.action-buttons .btn-warning {
+    color: #fff;
+    background-color: #ffc107;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.action-buttons .btn-warning:hover {
+    background-color: #e0a800;
+}
+
+.action-buttons .btn-danger {
+    color: #fff;
+    background-color: #dc3545;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.action-buttons .btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Modal Styling */
+.modal-header {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: 600;
+}
+
+.modal-title {
+    margin: 0;
+}
+
+.modal-body {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.form-control {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #444;
+}
+
+.save-button {
+    width: 100%;
+    margin-top: 10px;
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.save-button:hover {
+    background-color: #0056b3;
+}
+
+/* Navbar Styling */
+.navbar-dark .navbar-brand {
+    font-weight: 600;
+    color: #ffffff !important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #cccccc !important;
+    transition: color 0.3s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #ffffff !important;
+}

@@ -1,0 +1,33 @@
+/* src/components/Admin/AdminSalesReport.css */
+
+.admin-sales-report {
+    margin-top: 20px;
+}
+
+.sales-summary {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.sales-summary .summary-item {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filter-form {
+    display: flex;
+    align-items: center;
+}
+
+.filter-form .form-group {
+    margin-right: 10px;
+}
+
+.table th,
+.table td {
+    text-align: center;
+    vertical-align: middle;
+}

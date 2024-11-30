@@ -1,0 +1,38 @@
+/* ProductDetailModal.css */
+
+/* Center the modal body content */
+.product-modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Center the product image */
+.product-image {
+    max-width: 100%; /* Ensure the image doesn't exceed the container width */
+    height: auto; /* Maintain the image aspect ratio */
+    margin-bottom: 20px; /* Add some space below the image */
+}
+
+/* Wrapper to center the quantity input group */
+.quantity-input-wrapper {
+    display: flex;
+    justify-content: center; /* Center the input group */
+    width: 100%; /* Make sure the input group wrapper spans the full width */
+    margin-top: 10px; /* Add some space above the input group */
+}
+
+/* Center the quantity input group itself */
+.quantity-input-group {
+    display: flex;
+    align-items: center;
+    max-width: 200px; /* Set a max width for the input group */
+    width: 100%; /* Make sure the input group spans the full width within the wrapper */
+}
+
+/* Center the button in the modal footer */
+.modal-footer {
+    display: flex;
+    justify-content: center; /* Center the button horizontally */
+}

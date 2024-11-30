@@ -1,0 +1,24 @@
+/* src/components/Admin/AdminOrderList.css */
+
+.admin-order-list h2 {
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.admin-order-list .table {
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.admin-order-list .table th, .admin-order-list .table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.admin-order-list .dropdown-toggle {
+    background-color: #6c757d;
+    border: none;
+    color: white;
+}
