@@ -1,30 +1,33 @@
-import React, { useState, useContext } from "react";
+import React, { useReducer, useState, useContext } from "react";
 import { Modal, Button, Image, InputGroup, FormControl, Alert } from "react-bootstrap";
 import { CartContext } from "../../context/CartContext"; // Menggunakan konteks keranjang untuk menambahkan produk
 
+// State awal untuk reducer
+const initialState = { quantity: 1 };
+
+// Reducer untuk mengatur jumlah produk
+function quantityReducer(state, action) {
+    switch (action.type) {
+        case "increment":
+            return { quantity: Math.min(state.quantity + 1, action.stock) }; // Tidak melebihi stok
+        case "decrement":
+            return { quantity: Math.max(state.quantity - 1, 1) }; // Tidak kurang dari 1
+        case "set":
+            return { quantity: Math.max(1, Math.min(action.value, action.stock)) }; // Validasi input manual
+        default:
+            throw new Error("Aksi tidak valid");
+    }
+}
+
 const ProductDetailModal = ({ show, handleClose, product }) => {
     const { addToCart } = useContext(CartContext); // Fungsi dari konteks untuk menambahkan ke keranjang
-    const [quantity, setQuantity] = useState(1); // State untuk jumlah produk yang akan ditambahkan
+    const [state, dispatch] = useReducer(quantityReducer, initialState); // Menggunakan useReducer
     const [showNotification, setShowNotification] = useState(false); // State untuk notifikasi sukses
-
-    // Increment jumlah produk hingga batas stok
-    const incrementQuantity = () => {
-        if (quantity < product.stock) {
-            setQuantity(quantity + 1);
-        }
-    };
-
-    // Decrement jumlah produk hingga batas minimum 1
-    const decrementQuantity = () => {
-        if (quantity > 1) {
-            setQuantity(quantity - 1);
-        }
-    };
 
     // Fungsi untuk menambahkan produk ke keranjang
     const handleAddToCart = () => {
         if (addToCart && typeof addToCart === "function") {
-            addToCart(product, quantity); // Tambahkan produk dengan jumlah tertentu
+            addToCart(product, state.quantity); // Tambahkan produk dengan jumlah tertentu
         } else {
             console.error("addToCart function is not defined in CartContext.");
         }
@@ -53,17 +56,31 @@ const ProductDetailModal = ({ show, handleClose, product }) => {
                 <p><strong>Stok:</strong> {product.stock}</p>
                 {/* Input untuk jumlah produk */}
                 <InputGroup className="mb-3">
-                    <Button variant="outline-secondary" onClick={decrementQuantity}>-</Button>
+                    <Button
+                        variant="outline-secondary"
+                        onClick={() => dispatch({ type: "decrement" })}
+                    >
+                        -
+                    </Button>
                     <FormControl
                         type="number"
-                        value={quantity}
+                        value={state.quantity}
                         onChange={(e) =>
-                            setQuantity(
-                                Math.max(1, Math.min(product.stock, Number(e.target.value)))
-                            )
+                            dispatch({
+                                type: "set",
+                                value: Number(e.target.value),
+                                stock: product.stock,
+                            })
                         }
                     />
-                    <Button variant="outline-secondary" onClick={incrementQuantity}>+</Button>
+                    <Button
+                        variant="outline-secondary"
+                        onClick={() =>
+                            dispatch({ type: "increment", stock: product.stock })
+                        }
+                    >
+                        +
+                    </Button>
                 </InputGroup>
             </Modal.Body>
             <Modal.Footer>

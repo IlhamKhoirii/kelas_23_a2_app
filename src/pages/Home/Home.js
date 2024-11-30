@@ -1,9 +1,8 @@
-// src/pages/Home/Home.js
 import React, { useState, useContext } from "react";
-import Slider from "react-slick";  // Import Slider from react-slick
+import Slider from "react-slick"; // Import Slider from react-slick
 
 import UserProfileModal from "../Profile/UserProfileModal";
-import ProductDetailModal from "../Product/ProductDetailModal";  // Import the ProductDetailModal
+import ProductDetailModal from "../Product/ProductDetailModal"; // Import the ProductDetailModal
 import {
     Container,
     Card,
@@ -15,50 +14,28 @@ import {
 } from "react-bootstrap";
 import HeaderNavbar from "../../components/HeaderNavbar/HeaderNavbar";
 import { UserContext } from "../../context/UserContext";
-import { CartContext } from "../../context/CartContext";  // Import CartContext
-import { Link } from "react-router-dom";
+import { CartContext } from "../../context/CartContext"; // Import CartContext
+import products from "../../components/Products/Products"; // Import products
 import "./Home.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const Home = () => {
     const { profilePicture } = useContext(UserContext);
-    const { cartItems, addToCart } = useContext(CartContext);  // Access cartItems and addToCart from context
+    const { cartItems, addToCart } = useContext(CartContext); // Access cartItems and addToCart from context
     const [showProfileModal, setShowProfileModal] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState("sembako");
-    const [showProductModal, setShowProductModal] = useState(false);  // State to handle ProductDetailModal visibility
-    const [selectedProduct, setSelectedProduct] = useState(null);     // State to track the selected product
+    const [selectedCategory, setSelectedCategory] = useState(Object.keys(products)[0]); // Default ke kategori pertama
+    const [showProductModal, setShowProductModal] = useState(false); // State to handle ProductDetailModal visibility
+    const [selectedProduct, setSelectedProduct] = useState(null); // State to track the selected product
 
     const handleProfileClick = () => setShowProfileModal(true);
     const handleCloseModal = () => setShowProfileModal(false);
 
-    const products = {
-        sembako: [
-            { id: 1, name: "Beras Premium", price: 50000, sold: 120, stock: 50, imageUrl: "https://via.placeholder.com/150" },
-            { id: 2, name: "Minyak Goreng", price: 20000, sold: 80, stock: 30, imageUrl: "https://via.placeholder.com/150" },
-        ],
-        obat: [
-            { id: 3, name: "Paracetamol", price: 15000, sold: 60, stock: 100, imageUrl: "https://via.placeholder.com/150" },
-        ],
-        alat_tulis: [
-            { id: 4, name: "Pensil", price: 5000, sold: 200, stock: 300, imageUrl: "https://via.placeholder.com/150" },
-        ],
-        minuman: [
-            { id: 5, name: "Air Mineral", price: 3000, sold: 100, stock: 200, imageUrl: "https://via.placeholder.com/150" },
-        ],
-        alat_mandi: [
-            { id: 6, name: "Sabun Mandi", price: 7000, sold: 150, stock: 80, imageUrl: "https://via.placeholder.com/150" },
-        ],
-        snacks: [
-            { id: 7, name: "Keripik Kentang", price: 10000, sold: 90, stock: 40, imageUrl: "https://via.placeholder.com/150" },
-        ],
-    };
-
     const handleCategoryClick = (category) => setSelectedCategory(category);
 
     const handleProductClick = (product) => {
-        setSelectedProduct(product);          // Set selected product data
-        setShowProductModal(true);            // Open the ProductDetailModal
+        setSelectedProduct(product); // Set selected product data
+        setShowProductModal(true); // Open the ProductDetailModal
     };
 
     const sliderSettings = {
@@ -110,15 +87,22 @@ const Home = () => {
 
             <Container className="category-section mb-4">
                 <Slider {...sliderSettings}>
-                    {Object.keys(products).map((category) => (
-                        <div key={category} className="text-center category-slider-item">
+                    {Object.entries(products).map(([categoryName, categoryData]) => (
+                        <div key={categoryName} className="text-center category-slider-item">
                             <Button
-                                variant={selectedCategory === category ? "primary" : "outline-primary"}
-                                onClick={() => handleCategoryClick(category)}
+                                variant={selectedCategory === categoryName ? "primary" : "outline-primary"}
+                                onClick={() => handleCategoryClick(categoryName)}
                                 className="category-button"
                             >
-                                <Image src="https://via.placeholder.com/150" rounded className="category-image mb-2" />
-                                <h5 className="category-name">{category.charAt(0).toUpperCase() + category.slice(1)}</h5>
+                                {/* Gambar kategori diambil dari categoryData.imageUrl */}
+                                <Image
+                                    src={categoryData.imageUrl}
+                                    rounded
+                                    className="category-image mb-2"
+                                />
+                                <h5 className="category-name">
+                                    {categoryName.charAt(0).toUpperCase() + categoryName.slice(1)}
+                                </h5>
                             </Button>
                         </div>
                     ))}
@@ -127,9 +111,9 @@ const Home = () => {
 
             <Container>
                 <Row>
-                    {products[selectedCategory].map((product) => (
+                    {products[selectedCategory].items.map((product) => (
                         <Col md={4} key={product.id} className="mb-4">
-                            <Card onClick={() => handleProductClick(product)}>  {/* Click to open ProductDetailModal */}
+                            <Card onClick={() => handleProductClick(product)}> {/* Click to open ProductDetailModal */}
                                 <Card.Img variant="top" src={product.imageUrl} />
                                 <Card.Body>
                                     <Card.Title>{product.name}</Card.Title>
@@ -147,7 +131,7 @@ const Home = () => {
                     show={showProductModal}
                     onHide={() => setShowProductModal(false)}
                     product={selectedProduct}
-                    addToCart={addToCart}  // Pass addToCart function to ProductDetailModal
+                    addToCart={addToCart} // Pass addToCart function to ProductDetailModal
                 />
             )}
 
