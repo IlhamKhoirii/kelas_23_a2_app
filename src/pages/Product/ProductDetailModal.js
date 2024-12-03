@@ -19,7 +19,7 @@ function quantityReducer(state, action) {
     }
 }
 
-const ProductDetailModal = ({ show, handleClose, product }) => {
+const ProductDetailModal = ({ show, onHide, product }) => {
     const { addToCart } = useContext(CartContext); // Fungsi dari konteks untuk menambahkan ke keranjang
     const [state, dispatch] = useReducer(quantityReducer, initialState); // Menggunakan useReducer
     const [showNotification, setShowNotification] = useState(false); // State untuk notifikasi sukses
@@ -36,7 +36,7 @@ const ProductDetailModal = ({ show, handleClose, product }) => {
         setShowNotification(true);
         setTimeout(() => {
             setShowNotification(false); // Sembunyikan notifikasi setelah 2 detik
-            handleClose(); // Tutup modal setelah menambahkan ke keranjang
+            onHide(); // Tutup modal setelah menambahkan ke keranjang
         }, 2000);
     };
 
@@ -44,7 +44,7 @@ const ProductDetailModal = ({ show, handleClose, product }) => {
     if (!product) return null;
 
     return (
-        <Modal show={show} onHide={handleClose} centered>
+        <Modal show={show} onHide={onHide} centered>
             <Modal.Header closeButton>
                 <Modal.Title>{product.name}</Modal.Title>
             </Modal.Header>
