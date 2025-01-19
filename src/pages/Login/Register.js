@@ -1,28 +1,44 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
 const Register = () => {
-    const [username, setUsername] = useState("");
+    const [namaUser, setNamaUser] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [role, setRole] = useState("pelanggan");
+    const navigate = useNavigate();
 
-    const handleRegister = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Tambahkan logika registrasi di sini
-        console.log("Register:", { username, email, password });
+
+        try {
+            const res = await axios.post("http://localhost:5000/api/users/register", {
+                nama_user: namaUser,
+                email,
+                password,
+                role,
+            });
+            alert(res.data.message || "Registrasi berhasil");
+            navigate("/login");
+        } catch (err) {
+            alert(err.response?.data?.message || "Registrasi gagal. Periksa kembali data Anda.");
+        }
     };
 
     return (
-        <div className="register-container">
+        <div className="form-container">
             <h2>Register</h2>
-            <form onSubmit={handleRegister} className="register-form">
-                <label>Username</label>
+            <form onSubmit={handleSubmit}>
+                <label>Nama Lengkap</label>
                 <input
                     type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    value={namaUser}
+                    onChange={(e) => setNamaUser(e.target.value)}
                     required
                 />
+
                 <label>Email</label>
                 <input
                     type="email"
@@ -30,6 +46,7 @@ const Register = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
+
                 <label>Password</label>
                 <input
                     type="password"
@@ -37,9 +54,15 @@ const Register = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
+
+                <label>Role</label>
+                <select value={role} onChange={(e) => setRole(e.target.value)}>
+                    <option value="pelanggan">Pelanggan</option>
+                    <option value="admin">Admin</option>
+                </select>
+
                 <button type="submit">Register</button>
             </form>
-            <p>Sudah punya akun? <a href="login">Login</a></p>
         </div>
     );
 };

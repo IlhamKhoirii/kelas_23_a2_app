@@ -1,4 +1,4 @@
-/* CSS styling untuk Login dan Register */
+/* Global Styling */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -6,7 +6,7 @@
     font-family: Arial, sans-serif;
 }
 
-.login-container, .register-container {
+.form-container {
     width: 100%;
     max-width: 400px;
     margin: 50px auto;
@@ -36,11 +36,13 @@ label {
 
 input[type="email"],
 input[type="password"],
-input[type="text"] {
+input[type="text"],
+select {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     margin-bottom: 15px;
+    font-size: 14px;
 }
 
 button {
@@ -51,6 +53,7 @@ button {
     color: white;
     font-size: 16px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
@@ -71,7 +74,7 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Login.css */
+/* Error Message Styling */
 .error-message {
     color: red;
     margin-top: 10px;

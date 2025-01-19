@@ -1,61 +1,36 @@
-// src/components/Login/Login.js
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 import "./Login.css";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState(""); // State to store error messages
+    const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
 
-    // Mock data for admin and user credentials
-    const credentials = {
-        admin: {
-            email: "admin@gmail.com",
-            password: "admin123",
-            role: "admin",
-            redirectPath: "/admin/dashboard",
-            authToken: "adminAuthToken"
-        },
-        user: {
-            email: "user@gmail.com",
-            password: "user123",
-            role: "user",
-            redirectPath: "/home",
-            authToken: "userAuthToken"
-        }
-    };
+    const API_URL = "http://localhost:5000/api/users/login";
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-
-        // Check credentials
-        if (email === credentials.admin.email && password === credentials.admin.password) {
-            authenticateUser(credentials.admin);
-        } else if (email === credentials.user.email && password === credentials.user.password) {
-            authenticateUser(credentials.user);
-        } else {
-            setErrorMessage("Email atau password salah. Silahkan coba lagi.");
+        try {
+            const response = await axios.post(`${API_URL}/login`, { email, password });
+            localStorage.setItem("user", JSON.stringify(response.data));
+            navigate("/dashboard");
+            setErrorMessage("");
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                setErrorMessage(error.response.data.message);
+            } else {
+                setErrorMessage("Terjadi kesalahan. Silakan coba lagi.");
+            }
         }
-    };
-
-    const authenticateUser = ({ authToken, role, redirectPath }) => {
-        // Save authentication details in local storage
-        localStorage.setItem("authToken", authToken);
-        localStorage.setItem("userRole", role);
-
-        // Clear any existing error message
-        setErrorMessage("");
-
-        // Navigate to the specified path
-        navigate(redirectPath);
     };
 
     return (
-        <div className="login-container">
+        <div className="form-container">
             <h2>Login</h2>
-            <form onSubmit={handleLogin} className="login-form">
+            <form onSubmit={handleLogin}>
                 <label>Email</label>
                 <input
                     type="email"
@@ -63,8 +38,8 @@ const Login = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
-                
-                <label>Password   </label>
+
+                <label>Password</label>
                 <input
                     type="password"
                     value={password}
@@ -74,9 +49,11 @@ const Login = () => {
 
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-                <button type="submit">Login</button> 
+                <button type="submit">Login</button>
             </form>
-            <p>Belum punya akun? <Link to="/register">Register</Link></p>
+            <p>
+                Belum punya akun? <Link to="/register">Register</Link>
+            </p>
         </div>
     );
 };

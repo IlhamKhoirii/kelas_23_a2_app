@@ -1,6 +1,14 @@
-import React, { useReducer, useState, useContext } from "react";
-import { Modal, Button, Image, InputGroup, FormControl, Alert } from "react-bootstrap";
-import { CartContext } from "../../context/CartContext"; // Menggunakan konteks keranjang untuk menambahkan produk
+import React, { useReducer, useState, useEffect } from "react";
+import {
+    Modal,
+    Button,
+    Image,
+    InputGroup,
+    FormControl,
+    Alert,
+    Spinner,
+} from "react-bootstrap";
+import axios from "axios";
 
 // State awal untuk reducer
 const initialState = { quantity: 1 };
@@ -19,18 +27,43 @@ function quantityReducer(state, action) {
     }
 }
 
-const ProductDetailModal = ({ show, onHide, product }) => {
-    const { addToCart } = useContext(CartContext); // Fungsi dari konteks untuk menambahkan ke keranjang
-    const [state, dispatch] = useReducer(quantityReducer, initialState); // Menggunakan useReducer
+const ProductDetailModal = ({ show, onHide, productId }) => {
+    const [product, setProduct] = useState(null);
+    const [state, dispatch] = useReducer(quantityReducer, initialState);
+    const [loading, setLoading] = useState(false); // State untuk loading
+    const [error, setError] = useState(null); // State untuk menangkap error
     const [showNotification, setShowNotification] = useState(false); // State untuk notifikasi sukses
+
+    useEffect(() => {
+        if (productId) {
+            // Ambil detail produk dari backend berdasarkan ID
+            const fetchProduct = async () => {
+                setLoading(true);
+                setError(null);
+                try {
+                    const response = await axios.get(
+                        `http://localhost:5000/api/produk/${productId}`
+                    );
+                    setProduct(response.data); // Pastikan data dari API sesuai dengan model Produk.js
+                } catch (err) {
+                    setError("Gagal memuat detail produk. Silakan coba lagi.");
+                    console.error("Error:", err.message);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchProduct();
+        }
+    }, [productId]);
 
     // Fungsi untuk menambahkan produk ke keranjang
     const handleAddToCart = () => {
-        if (addToCart && typeof addToCart === "function") {
-            addToCart(product, state.quantity); // Tambahkan produk dengan jumlah tertentu
-        } else {
-            console.error("addToCart function is not defined in CartContext.");
-        }
+        if (!product) return;
+
+        console.log(
+            `Produk ${product.nama_produk} ditambahkan ke keranjang:`,
+            state.quantity
+        );
 
         // Tampilkan notifikasi sukses
         setShowNotification(true);
@@ -40,52 +73,90 @@ const ProductDetailModal = ({ show, onHide, product }) => {
         }, 2000);
     };
 
-    // Jika tidak ada produk yang dipilih, jangan render modal
-    if (!product) return null;
+    if (!show) return null;
 
     return (
         <Modal show={show} onHide={onHide} centered>
             <Modal.Header closeButton>
-                <Modal.Title>{product.name}</Modal.Title>
+                <Modal.Title>
+                    {loading
+                        ? "Memuat..."
+                        : product
+                        ? product.nama_produk
+                        : "Produk Tidak Ditemukan"}
+                </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {/* Gambar produk */}
-                <Image src={product.imageUrl} fluid className="mb-3" />
-                {/* Detail produk */}
-                <p><strong>Harga:</strong> Rp{product.price.toLocaleString()}</p>
-                <p><strong>Stok:</strong> {product.stock}</p>
-                {/* Input untuk jumlah produk */}
-                <InputGroup className="mb-3">
-                    <Button
-                        variant="outline-secondary"
-                        onClick={() => dispatch({ type: "decrement" })}
-                    >
-                        -
-                    </Button>
-                    <FormControl
-                        type="number"
-                        value={state.quantity}
-                        onChange={(e) =>
-                            dispatch({
-                                type: "set",
-                                value: Number(e.target.value),
-                                stock: product.stock,
-                            })
-                        }
-                    />
-                    <Button
-                        variant="outline-secondary"
-                        onClick={() =>
-                            dispatch({ type: "increment", stock: product.stock })
-                        }
-                    >
-                        +
-                    </Button>
-                </InputGroup>
+                {loading && (
+                    <div className="text-center">
+                        <Spinner animation="border" variant="primary" />
+                        <p>Memuat detail produk...</p>
+                    </div>
+                )}
+                {error && <Alert variant="danger">{error}</Alert>}
+                {product && !loading && (
+                    <>
+                        {/* Gambar produk */}
+                        <Image
+                            src={`http://localhost:5000/uploads/${product.gambar}`}
+                            fluid
+                            className="mb-3"
+                        />
+                        {/* Detail produk */}
+                        <p>
+                            <strong>Harga:</strong> Rp
+                            {parseFloat(product.harga).toLocaleString()}
+                        </p>
+                        <p>
+                            <strong>Stok:</strong> {product.stok}
+                        </p>
+                        <p>
+                            <strong>Deskripsi:</strong> {product.deskripsi}
+                        </p>
+                        <p>
+                            <strong>Terjual:</strong> {product.terjual}
+                        </p>
+                        {/* Input untuk jumlah produk */}
+                        <InputGroup className="mb-3">
+                            <Button
+                                variant="outline-secondary"
+                                onClick={() => dispatch({ type: "decrement" })}
+                            >
+                                -
+                            </Button>
+                            <FormControl
+                                type="number"
+                                value={state.quantity}
+                                onChange={(e) =>
+                                    dispatch({
+                                        type: "set",
+                                        value: Number(e.target.value),
+                                        stock: product.stok,
+                                    })
+                                }
+                            />
+                            <Button
+                                variant="outline-secondary"
+                                onClick={() =>
+                                    dispatch({
+                                        type: "increment",
+                                        stock: product.stok,
+                                    })
+                                }
+                            >
+                                +
+                            </Button>
+                        </InputGroup>
+                    </>
+                )}
             </Modal.Body>
             <Modal.Footer>
                 {/* Tombol tambah ke keranjang */}
-                <Button variant="primary" onClick={handleAddToCart}>
+                <Button
+                    variant="primary"
+                    onClick={handleAddToCart}
+                    disabled={!product || loading}
+                >
                     Tambah ke Keranjang
                 </Button>
             </Modal.Footer>
