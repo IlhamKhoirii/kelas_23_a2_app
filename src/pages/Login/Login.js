@@ -14,9 +14,17 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${API_URL}/login`, { email, password });
-            localStorage.setItem("user", JSON.stringify(response.data));
-            navigate("/dashboard");
+            const response = await axios.post(`${API_URL}`, { email, password });
+            const user = response.data.user;
+            localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem("authToken", response.data.token);
+
+            if (user.role === "admin") {
+                navigate("/admin/dashboard");
+            } else if (user.role === "pelanggan") {
+                navigate("/home");
+            }
+
             setErrorMessage("");
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
@@ -38,7 +46,6 @@ const Login = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
-
                 <label>Password</label>
                 <input
                     type="password"
@@ -46,9 +53,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
-
                 <button type="submit">Login</button>
             </form>
             <p>
