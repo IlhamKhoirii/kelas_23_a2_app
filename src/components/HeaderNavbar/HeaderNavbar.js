@@ -1,11 +1,10 @@
-// src/pages/components/HeaderNavbar.js
 import React from "react";
 import { Navbar, Container, Nav, InputGroup, FormControl, Button, Image, Badge } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaUserCircle, FaShoppingCart } from "react-icons/fa";
 import "./HeaderNavbar.css";
 
-const HeaderNavbar = ({ profilePicture, cartItems, handleProfileClick }) => {
+const HeaderNavbar = ({ profilePicture, cartItems = [], handleProfileClick }) => {
     return (
         <Navbar bg="light" expand="lg" className="mb-4">
             <Container>
