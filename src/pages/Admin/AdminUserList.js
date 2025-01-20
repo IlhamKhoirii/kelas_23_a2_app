@@ -1,22 +1,26 @@
-// src/components/Admin/AdminUserList.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Table, Button, Navbar, Nav, Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import axios from "axios";
 import "./AdminUserList.css";
 
 const AdminUserList = () => {
     const navigate = useNavigate();
+    const [users, setUsers] = useState([]);
 
-    // Mock data for users (in a real app, fetch this data from an API)
-    const [users] = useState([
-        { id: 1, username: "john_doe", email: "john@example.com", address: "123 Main St, City A" },
-        { id: 2, username: "jane_smith", email: "jane@example.com", address: "456 Oak St, City B" },
-        { id: 3, username: "alex_jones", email: "alex@example.com", address: "789 Pine St, City C" },
-    ]);
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await axios.get("http://localhost:5000/api/users");
+                setUsers(response.data);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+            }
+        };
 
-    // Total users state
-    const totalUsers = users.length;
+        fetchUsers();
+    }, []);
 
     // Handle logout function
     const handleLogout = () => {
@@ -59,7 +63,7 @@ const AdminUserList = () => {
             {/* User Management Section */}
             <Container className="admin-user-list mt-4">
                 <h2>Manajemen Pengguna</h2>
-                <p>Total Pengguna Terdaftar: <strong>{totalUsers}</strong></p>
+                <p>Total Pengguna Terdaftar: <strong>{users.length}</strong></p>
 
                 {/* Users Table */}
                 <Table striped bordered hover responsive>
@@ -74,11 +78,11 @@ const AdminUserList = () => {
                     </thead>
                     <tbody>
                         {users.map((user) => (
-                            <tr key={user.id}>
-                                <td>{user.id}</td>
-                                <td>{user.username}</td>
+                            <tr key={user.id_user}>
+                                <td>{user.id_user}</td>
+                                <td>{user.nama_user}</td>
                                 <td>{user.email}</td>
-                                <td>{user.address}</td>
+                                <td>{user.alamat}</td>
                                 <td>
                                     <Button variant="warning" size="sm" className="me-2">
                                         Lihat Detail

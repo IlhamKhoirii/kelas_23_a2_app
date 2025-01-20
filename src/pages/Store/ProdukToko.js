@@ -27,8 +27,8 @@ const ProdukToko = () => {
     const fetchProductsAndCategories = async () => {
       try {
         // Fetch products
-        const productResponse = await axios.get("http://localhost:5000/api/produk"); // Ubah URL sesuai endpoint Anda
-        const categoryResponse = await axios.get("http://localhost:5000/api/kategori"); // Ubah URL sesuai endpoint kategori Anda
+        const productResponse = await axios.get("http://localhost:5000/api/produk");
+        const categoryResponse = await axios.get("http://localhost:5000/api/kategori");
         setProducts(productResponse.data);
         setCategories(categoryResponse.data);
         setLoading(false);
@@ -87,7 +87,7 @@ const ProdukToko = () => {
           {filteredProducts.map((product) => (
             <Col md={4} key={product.id_produk} className="mb-4">
               <Card onClick={() => handleProductClick(product)}>
-                <Card.Img variant="top" src={product.gambar} />
+                <Card.Img variant="top" src={`http://localhost:5000/uploads/${product.gambar}`} />
                 <Card.Body>
                   <Card.Title>{product.nama_produk}</Card.Title>
                   <Card.Text>
@@ -106,8 +106,7 @@ const ProdukToko = () => {
         <ProductDetailModal
           show={showProductModal}
           onHide={handleCloseProductModal}
-          product={selectedProduct}
-          addToCart={addToCart}
+          productId={selectedProduct.id_produk}
         />
       )}
       {showProfileModal && (

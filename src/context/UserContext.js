@@ -1,21 +1,59 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
+import axios from "axios";
 
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-    const [profilePicture, setProfilePicture] = useState(null);
-    const [namaPengguna, setNamaPengguna] = useState("Evelyn"); // Initial value for the username
+    const [namaPengguna, setNamaPengguna] = useState("");
+    const [emailPengguna, setEmailPengguna] = useState("");
+    const [alamat, setAlamat] = useState("");
+    const [userId, setUserId] = useState(null);
 
-    const updateProfilePicture = (newProfilePicture) => {
-        setProfilePicture(newProfilePicture);
-    };
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const user = JSON.parse(localStorage.getItem("user"));
+                if (user && user.id_user) {
+                    const response = await axios.get(`http://localhost:5000/api/users/${user.id_user}`);
+                    const userData = response.data;
+                    setUserId(userData.id_user);
+                    setNamaPengguna(userData.nama_user);
+                    setEmailPengguna(userData.email);
+                    // Fetch alamat data
+                    const alamatResponse = await axios.get(`http://localhost:5000/api/alamatpelanggan/${user.id_user}`);
+                    const alamatData = alamatResponse.data;
+                    setAlamat(alamatData.alamat);
+                }
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     const updateNamaPengguna = (newNamaPengguna) => {
         setNamaPengguna(newNamaPengguna);
     };
 
+    const updateEmailPengguna = (newEmailPengguna) => {
+        setEmailPengguna(newEmailPengguna);
+    };
+
+    const updateAlamat = (newAlamat) => {
+        setAlamat(newAlamat);
+    };
+
     return (
-        <UserContext.Provider value={{ profilePicture, namaPengguna, updateProfilePicture, updateNamaPengguna }}>
+        <UserContext.Provider value={{
+            namaPengguna,
+            emailPengguna,
+            alamat,
+            userId,
+            updateNamaPengguna,
+            updateEmailPengguna,
+            updateAlamat
+        }}>
             {children}
         </UserContext.Provider>
     );

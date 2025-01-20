@@ -1,18 +1,39 @@
-// src/components/Admin/AdminDashboard.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar, Nav, Container, Button, Dropdown, Card, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import axios from "axios";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
     const [showLogoutMessage, setShowLogoutMessage] = useState(false);
 
-    // Mock data for totals
-    const totalUsers = 150;
-    const totalFeedback = 20;
-    const totalProducts = 75;
+    const [totalUsers, setTotalUsers] = useState(0);
+    const [totalFeedback, setTotalFeedback] = useState(0);
+    const [totalProducts, setTotalProducts] = useState(0);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Fetch total users
+                const usersResponse = await axios.get("http://localhost:5000/api/users");
+                setTotalUsers(usersResponse.data.length);
+
+                // Fetch total feedback (assuming there's an endpoint for feedback)
+                const feedbackResponse = await axios.get("http://localhost:5000/api/feedback");
+                setTotalFeedback(feedbackResponse.data.length);
+
+                // Fetch total products
+                const productsResponse = await axios.get("http://localhost:5000/api/produk");
+                setTotalProducts(productsResponse.data.length);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     // Function to handle logout
     const handleLogout = () => {

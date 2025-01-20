@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Navbar, Container, Nav, InputGroup, FormControl, Button, Image, Badge } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaUserCircle, FaShoppingCart } from "react-icons/fa";
+import { UserContext } from "../../context/UserContext";
 import "./HeaderNavbar.css";
 
-const HeaderNavbar = ({ profilePicture, cartItems = [], handleProfileClick }) => {
+const HeaderNavbar = ({ cartItems = [], handleProfileClick }) => {
+    const { namaPengguna } = useContext(UserContext);
+
     return (
         <Navbar bg="light" expand="lg" className="mb-4">
             <Container>
@@ -27,12 +30,8 @@ const HeaderNavbar = ({ profilePicture, cartItems = [], handleProfileClick }) =>
 
                         {/* Profile Section */}
                         <Nav.Link onClick={handleProfileClick} className="d-flex align-items-center me-3 profile-section">
-                            {profilePicture ? (
-                                <Image src={profilePicture} roundedCircle width={32} height={32} alt="User" className="me-2 profile-picture" />
-                            ) : (
-                                <FaUserCircle size={32} className="me-2 profile-picture" />
-                            )}
-                            <span className="user-name">Evelyn</span>
+                            <FaUserCircle size={32} className="me-2 profile-picture" />
+                            <span className="user-name">{namaPengguna}</span>
                         </Nav.Link>
 
                         {/* Cart Icon with Badge */}
