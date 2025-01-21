@@ -1,39 +1,87 @@
-import React, { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom"; // Added 'Link' here
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { CartContext } from "../../context/CartContext";
-import { UserContext } from "../../context/UserContext"; // Add UserContext for user details
-import { Container, Row, Col, Form, Button, Modal, Navbar, Nav, InputGroup, FormControl, Image, Badge } from "react-bootstrap";
-import { FaSearch, FaShoppingCart, FaUserCircle } from "react-icons/fa";
-import './Checkout.css';
+import { UserContext } from "../../context/UserContext";
+import { Container, Row, Col, Form, Button, Modal } from "react-bootstrap";
 import HeaderNavbar from "../../components/HeaderNavbar/HeaderNavbar";
+import axios from "axios";
+import './Checkout.css';
 
 const Checkout = () => {
     const navigate = useNavigate();
-    const { cartItems } = useContext(CartContext);
-    const { profilePicture } = useContext(UserContext); // Access user details
+    const { cartItems, clearCart } = useContext(CartContext);
+    const { userId, profilePicture } = useContext(UserContext);
 
-    // Calculate the subtotal
-    const calculateSubtotal = () => {
-        return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    };
-
-    const [name, setName] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [paymentMethod, setPaymentMethod] = useState("COD");
-    const [address, setAddress] = useState("");
+    const [user, setUser] = useState({});
+    const [addresses, setAddresses] = useState([]);
+    const [paymentMethods, setPaymentMethods] = useState([]);
+    const [selectedAddress, setSelectedAddress] = useState("");
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
     const [deliveryNotes, setDeliveryNotes] = useState("");
     const [showSuccess, setShowSuccess] = useState(false);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const userResponse = await axios.get(`http://localhost:5000/api/users/${userId}`);
+                setUser(userResponse.data);
+
+                const addressResponse = await axios.get(`http://localhost:5000/api/alamat/${userId}`);
+                setAddresses(addressResponse.data);
+
+                const paymentMethodsResponse = await axios.get("http://localhost:5000/api/metodepembayaran");
+                setPaymentMethods(paymentMethodsResponse.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchUserData();
+    }, [userId]);
+
+    const calculateSubtotal = () => {
+        return cartItems.reduce((acc, item) => acc + item.harga * item.quantity, 0);
+    };
 
     const shippingCost = 10000; // Example fixed shipping cost
     const subtotal = calculateSubtotal();
     const total = subtotal + shippingCost;
 
-    const handleCheckout = () => {
-        if (name && phoneNumber && address) {
-            setShowSuccess(true); // Show success notification
-            setTimeout(() => {
-                navigate("/"); // Redirect to the main page after 3 seconds
-            }, 3000);
+    const handleCheckout = async () => {
+        if (selectedAddress && selectedPaymentMethod) {
+            try {
+                const orderResponse = await axios.post("http://localhost:5000/api/pesanan", {
+                    id_user: userId,
+                    total_barang: cartItems.length,
+                    status: "tertunda",
+                });
+
+                const orderId = orderResponse.data.pesanan.id_pesanan;
+
+                await axios.post("http://localhost:5000/api/detail-pesanan", {
+                    id_pesanan: orderId,
+                    id_produk: cartItems.map(item => item.id_produk),
+                    id_alamat: selectedAddress,
+                    id_metode_pengiriman: 1, // Assuming a default shipping method
+                    kuantitas: cartItems.map(item => item.quantity),
+                });
+
+                await axios.post("http://localhost:5000/api/transaksi-pembayaran", {
+                    id_pesanan: orderId,
+                    id_metode_pembayaran: selectedPaymentMethod,
+                    jumlah_bayar: total,
+                    status_pembayaran: "pending",
+                });
+
+                clearCart();
+                setShowSuccess(true); // Show success notification
+                setTimeout(() => {
+                    navigate("/"); // Redirect to the main page after 3 seconds
+                }, 3000);
+            } catch (error) {
+                console.error("Error during checkout:", error);
+                alert("Terjadi kesalahan saat melakukan checkout. Silakan coba lagi.");
+            }
         } else {
             alert("Please fill in all required fields.");
         }
@@ -84,10 +132,8 @@ const Checkout = () => {
                                     <Form.Label>Your Name</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        placeholder="Enter your name"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        required
+                                        value={user.nama_user || ""}
+                                        readOnly
                                     />
                                 </Form.Group>
 
@@ -96,10 +142,8 @@ const Checkout = () => {
                                     <Form.Label>Phone Number</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        placeholder="Enter your phone number"
-                                        value={phoneNumber}
-                                        onChange={(e) => setPhoneNumber(e.target.value)}
-                                        required
+                                        value={user.phoneNumber || ""}
+                                        readOnly
                                     />
                                 </Form.Group>
 
@@ -107,25 +151,32 @@ const Checkout = () => {
                                 <Form.Group className="mb-3" controlId="formPaymentMethod">
                                     <Form.Label>Payment Method</Form.Label>
                                     <Form.Select
-                                        value={paymentMethod}
-                                        onChange={(e) => setPaymentMethod(e.target.value)}
+                                        value={selectedPaymentMethod}
+                                        onChange={(e) => setSelectedPaymentMethod(e.target.value)}
                                     >
-                                        <option value="COD">COD</option>
-                                        <option value="Bank Transfer">Bank Transfer</option>
+                                        <option value="">Select Payment Method</option>
+                                        {paymentMethods.map((method) => (
+                                            <option key={method.id_metode_pembayaran} value={method.id_metode_pembayaran}>
+                                                {method.nama_metode}
+                                            </option>
+                                        ))}
                                     </Form.Select>
                                 </Form.Group>
 
                                 {/* Address */}
                                 <Form.Group className="mb-3" controlId="formAddress">
                                     <Form.Label>Full Address</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={3}
-                                        placeholder="Enter your full address"
-                                        value={address}
-                                        onChange={(e) => setAddress(e.target.value)}
-                                        required
-                                    />
+                                    <Form.Select
+                                        value={selectedAddress}
+                                        onChange={(e) => setSelectedAddress(e.target.value)}
+                                    >
+                                        <option value="">Select Address</option>
+                                        {addresses.map((address) => (
+                                            <option key={address.id_alamat} value={address.id_alamat}>
+                                                {address.alamat_lengkap}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
                                 </Form.Group>
 
                                 {/* Delivery Notes */}

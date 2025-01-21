@@ -6,90 +6,133 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const AdminUserList = () => {
+const AdminProductList = () => {
     const navigate = useNavigate();
-    const [users, setUsers] = useState([]);
-    const [alamatPelanggan, setAlamatPelanggan] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [showCategoryModal, setShowCategoryModal] = useState(false);
+    const [productForm, setProductForm] = useState({ id_kategori: "", nama_produk: "", deskripsi: "", harga: "", stok: "", gambar: null });
+    const [categoryForm, setCategoryForm] = useState({ nama_kategori: "", deskripsi: "", gambar_kategori: null });
     const [isEditing, setIsEditing] = useState(false);
-    const [userForm, setUserForm] = useState({ id_user: "", nama_user: "", email: "", alamat: "" });
+    const [editProductId, setEditProductId] = useState(null);
 
     useEffect(() => {
-        const fetchUsers = async () => {
+        const fetchProducts = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/users");
-                setUsers(response.data);
+                const response = await axios.get("http://localhost:5000/api/produk");
+                setProducts(response.data);
             } catch (error) {
-                console.error("Error fetching users:", error);
+                console.error("Error fetching products:", error);
             }
         };
 
-        const fetchAlamatPelanggan = async () => {
+        const fetchCategories = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/alamat-pelanggan");
-                setAlamatPelanggan(response.data);
+                const response = await axios.get("http://localhost:5000/api/kategori");
+                setCategories(response.data);
             } catch (error) {
-                console.error("Error fetching alamat pelanggan:", error);
+                console.error("Error fetching categories:", error);
             }
         };
 
-        fetchUsers();
-        fetchAlamatPelanggan();
+        fetchProducts();
+        fetchCategories();
     }, []);
 
-    const handleShowModal = (user = null) => {
-        if (user) {
-            const alamat = alamatPelanggan.find(alamat => alamat.id_user === user.id_user);
-            setUserForm({ id_user: user.id_user, nama_user: user.nama_user, email: user.email, alamat: alamat ? alamat.alamat : "" });
+    const handleShowModal = (product = null) => {
+        if (product) {
+            setProductForm(product);
             setIsEditing(true);
+            setEditProductId(product.id_produk);
         } else {
-            setUserForm({ id_user: "", nama_user: "", email: "", alamat: "" });
+            setProductForm({ id_kategori: "", nama_produk: "", deskripsi: "", harga: "", stok: "", gambar: null });
             setIsEditing(false);
         }
         setShowModal(true);
     };
 
+    const handleShowCategoryModal = () => {
+        setCategoryForm({ nama_kategori: "", deskripsi: "", gambar_kategori: null });
+        setShowCategoryModal(true);
+    };
+
     const handleCloseModal = () => setShowModal(false);
+    const handleCloseCategoryModal = () => setShowCategoryModal(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setUserForm({ ...userForm, [name]: value });
+        setProductForm({ ...productForm, [name]: value });
     };
 
-    const handleSaveUser = async () => {
-        const { id_user, nama_user, email, alamat } = userForm;
+    const handleCategoryChange = (e) => {
+        const { name, value } = e.target;
+        setCategoryForm({ ...categoryForm, [name]: value });
+    };
+
+    const handleImageChange = (e) => {
+        setProductForm({ ...productForm, gambar: e.target.files[0] });
+    };
+
+    const handleCategoryImageChange = (e) => {
+        setCategoryForm({ ...categoryForm, gambar_kategori: e.target.files[0] });
+    };
+
+    const handleSaveProduct = async () => {
+        const formData = new FormData();
+        formData.append("id_kategori", productForm.id_kategori);
+        formData.append("nama_produk", productForm.nama_produk);
+        formData.append("deskripsi", productForm.deskripsi);
+        formData.append("harga", productForm.harga);
+        formData.append("stok", productForm.stok);
+        if (productForm.gambar) {
+            formData.append("gambar", productForm.gambar);
+        }
 
         try {
             if (isEditing) {
-                await axios.put(`http://localhost:5000/api/users/${id_user}`, { nama_user, email });
-                await axios.put(`http://localhost:5000/api/alamat-pelanggan/${id_user}`, { alamat });
-                toast.success("Berhasil Update");
+                await axios.put(`http://localhost:5000/api/produk/${editProductId}`, formData);
             } else {
-                const userResponse = await axios.post("http://localhost:5000/api/users", { nama_user, email });
-                const newUser = userResponse.data;
-                await axios.post("http://localhost:5000/api/alamat-pelanggan", { id_user: newUser.id_user, alamat });
-                toast.success("Pengguna Berhasil Ditambahkan");
+                await axios.post("http://localhost:5000/api/produk", formData);
+                toast.success("Produk Berhasil Ditambahkan"); // Notifikasi sukses
             }
-            const usersResponse = await axios.get("http://localhost:5000/api/users");
-            setUsers(usersResponse.data);
-            const alamatResponse = await axios.get("http://localhost:5000/api/alamat-pelanggan");
-            setAlamatPelanggan(alamatResponse.data);
+            const response = await axios.get("http://localhost:5000/api/produk");
+            setProducts(response.data);
         } catch (error) {
-            console.error("Error saving user:", error);
-            toast.error("Gagal menyimpan pengguna");
+            console.error("Error saving product:", error);
         }
 
         handleCloseModal();
     };
 
-    const handleDeleteUser = async (id) => {
+    const handleSaveCategory = async () => {
+        const formData = new FormData();
+        formData.append("nama_kategori", categoryForm.nama_kategori);
+        formData.append("deskripsi", categoryForm.deskripsi);
+        if (categoryForm.gambar_kategori) {
+            formData.append("gambar_kategori", categoryForm.gambar_kategori);
+        }
+
         try {
-            await axios.delete(`http://localhost:5000/api/users/${id}`);
-            setUsers(users.filter((user) => user.id_user !== id));
-            toast.success("Pengguna Berhasil Terhapus");
+            await axios.post("http://localhost:5000/api/kategori", formData);
+            const response = await axios.get("http://localhost:5000/api/kategori");
+            setCategories(response.data);
+            toast.success("Kategori Berhasil Ditambahkan"); // Notifikasi sukses
         } catch (error) {
-            console.error("Error deleting user:", error);
-            toast.error("Gagal menghapus pengguna");
+            console.error("Error saving category:", error);
+        }
+
+        handleCloseCategoryModal();
+    };
+
+    const handleDeleteProduct = async (id) => {
+        try {
+            await axios.delete(`http://localhost:5000/api/produk/${id}`);
+            setProducts(products.filter((product) => product.id_produk !== id));
+            toast.success("Produk Berhasil Terhapus");
+        } catch (error) {
+            console.error("Error deleting product:", error);
+            toast.error("Gagal menghapus produk");
         }
     };
 
@@ -130,38 +173,56 @@ const AdminUserList = () => {
                 </Container>
             </Navbar>
 
-            {/* User Management Section */}
+            {/* Product Management Section */}
             <Container className="mt-4">
-                <h2>Manajemen Pengguna</h2>
-                <Button variant="primary" className="mb-3" onClick={() => handleShowModal()}>
-                    <FaPlus /> Tambah Pengguna
+                <h2>Manajemen Produk</h2>
+                <Button variant="primary" className="mb-3 me-2" onClick={() => handleShowModal()}>
+                    <FaPlus /> Tambah Produk
+                </Button>
+                <Button variant="secondary" className="mb-3" onClick={() => handleShowCategoryModal()}>
+                    <FaPlus /> Tambah Kategori
                 </Button>
 
-                {/* Users Table */}
+                {/* Products Table */}
                 <Table striped bordered hover>
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nama Pengguna</th>
-                            <th>Email</th>
-                            <th>Alamat</th>
+                            <th>Nama Produk</th>
+                            <th>Kategori</th>
+                            <th>Harga</th>
+                            <th>Stok</th>
+                            <th>Gambar</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user) => {
-                            const alamat = alamatPelanggan.find(alamat => alamat.id_user === user.id_user);
+                        {products.map((product) => {
+                            const category = categories.find(cat => cat.id_kategori === product.id_kategori);
                             return (
-                                <tr key={user.id_user}>
-                                    <td>{user.id_user}</td>
-                                    <td>{user.nama_user}</td>
-                                    <td>{user.email}</td>
-                                    <td>{alamat ? alamat.alamat : "Tidak ada alamat"}</td>
+                                <tr key={product.id_produk}>
+                                    <td>{product.id_produk}</td>
+                                    <td>{product.nama_produk}</td>
+                                    <td>{category ? category.nama_kategori : "Tidak ada kategori"}</td>
+                                    <td>Rp {parseFloat(product.harga).toLocaleString()}</td>
+                                    <td>{product.stok}</td>
                                     <td>
-                                        <Button variant="warning" size="sm" className="me-2" onClick={() => handleShowModal(user)}>
+                                        {product.gambar ? (
+                                            <img
+                                                src={`http://localhost:5000/uploads/${product.gambar}`}
+                                                alt={product.nama_produk}
+                                                width="50"
+                                                height="50"
+                                            />
+                                        ) : (
+                                            "No Image"
+                                        )}
+                                    </td>
+                                    <td>
+                                        <Button variant="warning" size="sm" className="me-2" onClick={() => handleShowModal(product)}>
                                             <FaEdit /> Edit
                                         </Button>
-                                        <Button variant="danger" size="sm" onClick={() => handleDeleteUser(user.id_user)}>
+                                        <Button variant="danger" size="sm" onClick={() => handleDeleteProduct(product.id_produk)}>
                                             <FaTrash /> Hapus
                                         </Button>
                                     </td>
@@ -170,55 +231,133 @@ const AdminUserList = () => {
                         })}
                     </tbody>
                 </Table>
+
+                {/* Modal for Adding/Editing Product */}
+                <Modal show={showModal} onHide={handleCloseModal} centered>
+                    <Modal.Header closeButton>
+                        <Modal.Title>{isEditing ? "Edit Produk" : "Tambah Produk"}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                            <Form.Group controlId="formProductCategory" className="mb-3">
+                                <Form.Label>Kategori Produk</Form.Label>
+                                <Form.Control
+                                    as="select"
+                                    name="id_kategori"
+                                    value={productForm.id_kategori}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                    <option value="">Pilih Kategori</option>
+                                    {categories.map((category) => (
+                                        <option key={category.id_kategori} value={category.id_kategori}>
+                                            {category.nama_kategori}
+                                        </option>
+                                    ))}
+                                </Form.Control>
+                            </Form.Group>
+                            <Form.Group controlId="formProductName" className="mb-3">
+                                <Form.Label>Nama Produk</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="nama_produk"
+                                    value={productForm.nama_produk}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </Form.Group>
+                            <Form.Group controlId="formProductDescription" className="mb-3">
+                                <Form.Label>Deskripsi</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    name="deskripsi"
+                                    value={productForm.deskripsi}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </Form.Group>
+                            <Form.Group controlId="formProductPrice" className="mb-3">
+                                <Form.Label>Harga</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    name="harga"
+                                    value={productForm.harga}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </Form.Group>
+                            <Form.Group controlId="formProductStock" className="mb-3">
+                                <Form.Label>Stok</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    name="stok"
+                                    value={productForm.stok}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </Form.Group>
+                            <Form.Group controlId="formProductImage" className="mb-3">
+                                <Form.Label>Gambar Produk</Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    name="gambar"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                />
+                            </Form.Group>
+                            <Button variant="primary" onClick={handleSaveProduct}>
+                                {isEditing ? "Update Produk" : "Tambah Produk"}
+                            </Button>
+                        </Form>
+                    </Modal.Body>
+                </Modal>
+
+                {/* Modal for Adding Category */}
+                <Modal show={showCategoryModal} onHide={handleCloseCategoryModal} centered>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Tambah Kategori</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                            <Form.Group controlId="formCategoryName" className="mb-3">
+                                <Form.Label>Nama Kategori</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="nama_kategori"
+                                    value={categoryForm.nama_kategori}
+                                    onChange={handleCategoryChange}
+                                    required
+                                />
+                            </Form.Group>
+                            <Form.Group controlId="formCategoryDescription" className="mb-3">
+                                <Form.Label>Deskripsi</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    name="deskripsi"
+                                    value={categoryForm.deskripsi}
+                                    onChange={handleCategoryChange}
+                                    required
+                                />
+                            </Form.Group>
+                            <Form.Group controlId="formCategoryImage" className="mb-3">
+                                <Form.Label>Gambar Kategori</Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    name="gambar_kategori"
+                                    accept="image/*"
+                                    onChange={handleCategoryImageChange}
+                                />
+                            </Form.Group>
+                            <Button variant="primary" onClick={handleSaveCategory}>
+                                Tambah Kategori
+                            </Button>
+                        </Form>
+                    </Modal.Body>
+                </Modal>
             </Container>
-
-            {/* Modal for Adding/Editing User */}
-            <Modal show={showModal} onHide={handleCloseModal} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>{isEditing ? "Edit Pengguna" : "Tambah Pengguna"}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group controlId="formUserName" className="mb-3">
-                            <Form.Label>Nama Pengguna</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="nama_user"
-                                value={userForm.nama_user}
-                                onChange={handleChange}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formUserEmail" className="mb-3">
-                            <Form.Label>Email</Form.Label>
-                            <Form.Control
-                                type="email"
-                                name="email"
-                                value={userForm.email}
-                                onChange={handleChange}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formUserAlamat" className="mb-3">
-                            <Form.Label>Alamat</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                name="alamat"
-                                value={userForm.alamat}
-                                onChange={handleChange}
-                                required
-                            />
-                        </Form.Group>
-                        <Button variant="primary" onClick={handleSaveUser}>
-                            {isEditing ? "Update Pengguna" : "Tambah Pengguna"}
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
-
             <ToastContainer />
         </div>
     );
 };
 
-export default AdminUserList;
+export default AdminProductList;

@@ -2,37 +2,87 @@
     padding: 20px;
     max-width: 900px;
     margin: 0 auto;
+    background-color: #f8f9fa; /* Light background color */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 .cart-title {
     text-align: center;
     margin-bottom: 20px;
+    color: #007bff; /* Primary blue color */
+    font-weight: bold;
+    font-size: 1.5rem;
 }
 
 .cart-item {
     padding: 10px;
     border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+}
+
+.cart-item img {
+    max-height: 80px;
+    margin-right: 20px;
+    border-radius: 8px;
+}
+
+.cart-item-details {
+    flex: 1;
+}
+
+.cart-item-details h5 {
+    margin: 0;
+    color: #343a40; /* Darker text color */
+}
+
+.cart-item-details p {
+    margin: 0;
+    color: #6c757d; /* Muted text color */
 }
 
 .cart-summary {
     margin-top: 20px;
+    text-align: center;
 }
 
 .cart-summary h4 {
     font-weight: bold;
+    color: #007bff; /* Primary blue color */
 }
 
 .cart-summary .btn {
     margin-top: 10px;
     margin-right: 10px;
+    background-color: #007bff; /* Primary blue color */
+    border: none;
+}
+
+.cart-summary .btn-secondary {
+    background-color: #6c757d; /* Secondary color */
+}
+
+.cart-summary .btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.cart-summary .btn-secondary:hover {
+    background-color: #5a6268; /* Darker secondary color on hover */
 }
 
 .cart-items .input-group {
     width: 120px;
+    margin-top: 10px;
 }
 
-.cart-items img {
-    max-height: 80px;
+.cart-items .input-group .btn {
+    background-color: #007bff; /* Primary blue color */
+    border: none;
+}
+
+.cart-items .input-group .btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
 }
 
 /* Overlay styling */
@@ -50,8 +100,12 @@
 }
 
 /* Alert box styling for overlay */
-.overlay-alert {
-    width: 300px;
+.overlay-message {
+    background-color: #fff;
     padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    text-align: center;
+    color: #007bff; /* Primary blue color */
     font-size: 1.2rem;
 }

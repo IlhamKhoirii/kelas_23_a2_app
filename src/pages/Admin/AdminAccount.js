@@ -1,29 +1,56 @@
-// src/components/Admin/AdminAccount.js
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Form, Button, Container, Navbar, Nav, Dropdown } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { UserContext } from "../../context/UserContext";
 import "./AdminAccount.css";
 
 const AdminAccount = () => {
     const navigate = useNavigate();
-
-    // Mock admin data
+    const { userId, namaPengguna, emailPengguna, updateNamaPengguna, updateEmailPengguna } = useContext(UserContext);
     const [adminData, setAdminData] = useState({
-        adminId: "12345",
-        name: "Jane Smith",
-        email: "admin@gmail.com",
-        password: "admin123",
+        id_user: userId,
+        nama_user: namaPengguna,
+        email: emailPengguna,
+        password: "",
     });
-
     const [isEditing, setIsEditing] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Handle form submission
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        const fetchAdminData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/api/users/${userId}`);
+                setAdminData(response.data);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching admin data:", error);
+                setError("Gagal memuat data admin.");
+                setLoading(false);
+            }
+        };
+
+        if (userId) {
+            fetchAdminData();
+        }
+    }, [userId]);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Logic to save the updated admin data
-        console.log("Updated Admin Data:", adminData);
-        setIsEditing(false); // Disable editing mode after saving
+        try {
+            await axios.put(`http://localhost:5000/api/users/profile/${adminData.id_user}`, adminData);
+            setIsEditing(false); // Disable editing mode after saving
+            updateNamaPengguna(adminData.nama_user);
+            updateEmailPengguna(adminData.email);
+            toast.success("Data Berhasil Diperbarui"); // Tampilkan notifikasi sukses
+        } catch (error) {
+            console.error("Error updating admin data:", error);
+            toast.error("Gagal memperbarui data admin."); // Tampilkan notifikasi error
+        }
     };
 
     const handleLogout = () => {
@@ -31,6 +58,14 @@ const AdminAccount = () => {
         localStorage.removeItem("authToken");
         navigate("/login");
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
 
     return (
         <>
@@ -71,7 +106,7 @@ const AdminAccount = () => {
                         <Form.Label>Admin ID</Form.Label>
                         <Form.Control
                             type="text"
-                            value={adminData.adminId}
+                            value={adminData.id_user}
                             readOnly
                         />
                     </Form.Group>
@@ -80,9 +115,9 @@ const AdminAccount = () => {
                         <Form.Label>Nama Admin</Form.Label>
                         <Form.Control
                             type="text"
-                            value={adminData.name}
+                            value={adminData.nama_user}
                             readOnly={!isEditing}
-                            onChange={(e) => setAdminData({ ...adminData, name: e.target.value })}
+                            onChange={(e) => setAdminData({ ...adminData, nama_user: e.target.value })}
                         />
                     </Form.Group>
 
@@ -112,11 +147,13 @@ const AdminAccount = () => {
                         </Button>
                     ) : (
                         <Button variant="primary" onClick={() => setIsEditing(true)} className="mt-3">
-                            Edit Account
+                            Update Account
                         </Button>
                     )}
                 </Form>
             </Container>
+
+            <ToastContainer />
         </>
     );
 };

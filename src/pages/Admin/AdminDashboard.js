@@ -25,8 +25,8 @@ const AdminDashboard = () => {
                 setTotalFeedback(feedbackResponse.data.length);
 
                 // Fetch total products
-                const productsResponse = await axios.get("http://localhost:5000/api/produk");
-                setTotalProducts(productsResponse.data.length);
+                const productsResponse = await axios.get("http://localhost:5000/api/produk/total");
+                setTotalProducts(productsResponse.data.totalProduk);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }

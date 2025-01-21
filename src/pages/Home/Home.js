@@ -13,7 +13,7 @@ const Home = () => {
   const { profilePicture } = useContext(UserContext);
   const { cartItems, addToCart } = useContext(CartContext);
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showProductModal, setShowProductModal] = useState(false);
@@ -25,8 +25,8 @@ const Home = () => {
     const fetchProductsAndCategories = async () => {
       try {
         // Fetch products
-        const productResponse = await axios.get("http://localhost:5000/api/produk"); // Ubah URL sesuai endpoint Anda
-        const categoryResponse = await axios.get("http://localhost:5000/api/kategori"); // Ubah URL sesuai endpoint kategori Anda
+        const productResponse = await axios.get("http://localhost:5000/api/produk");
+        const categoryResponse = await axios.get("http://localhost:5000/api/kategori");
         setProducts(productResponse.data);
         setCategories(categoryResponse.data);
         setLoading(false);
@@ -48,12 +48,18 @@ const Home = () => {
     setShowProductModal(true);
   };
 
+  // Handle category click
   const handleCategoryClick = (categoryId) => {
-    setSelectedCategory(categoryId);
+    setSelectedCategory((prevCategory) =>
+      prevCategory === categoryId ? null : categoryId
+    );
   };
 
+  // Filter products based on selected category
   const filteredProducts = selectedCategory
-    ? products.filter((product) => product.id_kategori === selectedCategory)
+    ? products.filter(
+        (product) => String(product.id_kategori) === String(selectedCategory)
+      )
     : products;
 
   if (loading) {
@@ -96,9 +102,8 @@ const Home = () => {
 
       {/* Category Slider */}
       <Container className="mb-4">
-        <h2 className="text-start">Kategori</h2>
+        <h2 className="text-start category-section-title">Kategori</h2>
         <CategorySlider
-          categories={categories}
           selectedCategory={selectedCategory}
           onCategoryClick={handleCategoryClick}
         />
@@ -110,7 +115,7 @@ const Home = () => {
           {filteredProducts.map((product) => (
             <Col md={4} key={product.id_produk} className="mb-4">
               <Card onClick={() => handleProductClick(product)}>
-                <Card.Img variant="top" src={product.gambar} />
+                <Card.Img variant="top" src={`http://localhost:5000/uploads/${product.gambar}`} />
                 <Card.Body>
                   <Card.Title>{product.nama_produk}</Card.Title>
                   <Card.Text>
@@ -129,7 +134,7 @@ const Home = () => {
         <ProductDetailModal
           show={showProductModal}
           onHide={handleCloseProductModal}
-          product={selectedProduct}
+          productId={selectedProduct.id_produk}
           addToCart={addToCart}
         />
       )}

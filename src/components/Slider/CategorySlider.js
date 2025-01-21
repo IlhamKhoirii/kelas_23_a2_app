@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Slider from "react-slick";
-import { Button, Image } from "react-bootstrap";
+import { Button, Image, Spinner } from "react-bootstrap";
 import "./Slider.css";
 
 const CategorySlider = ({ selectedCategory, onCategoryClick }) => {
   const [categories, setCategories] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
 
   // Fetch categories from the API
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/kategori"); // Adjust the endpoint if necessary
+        const response = await axios.get("http://localhost:5000/api/kategori");
         setCategories(response.data);
-        setIsLoading(false);
+        setIsLoadingCategories(false);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
-        setIsLoading(false);
+        setIsLoadingCategories(false);
       }
     };
 
@@ -26,15 +26,22 @@ const CategorySlider = ({ selectedCategory, onCategoryClick }) => {
 
   const sliderSettings = {
     dots: true,
-    infinite: false,
+    infinite: false, // Slider stops at the last slide
     speed: 500,
-    slidesToShow: 3,
+    slidesToShow: categories.length < 4 ? categories.length : 4, // Dynamically adjust slidesToShow
     slidesToScroll: 1,
+    arrows: true,
     responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: categories.length < 3 ? categories.length : 3,
+        },
+      },
       {
         breakpoint: 768,
         settings: {
-          slidesToShow: 2,
+          slidesToShow: categories.length < 2 ? categories.length : 2,
         },
       },
       {
@@ -46,26 +53,26 @@ const CategorySlider = ({ selectedCategory, onCategoryClick }) => {
     ],
   };
 
-  if (isLoading) {
-    return <div>Loading categories...</div>;
+  if (isLoadingCategories) {
+    return <Spinner animation="border" variant="primary" />;
   }
 
   return (
     <div className="category-slider">
       <Slider {...sliderSettings}>
         {categories.map((category) => (
-          <div key={category.id} className="text-center category-slider-item">
+          <div key={category.id_kategori} className="text-center category-slider-item">
             <Button
               variant={
-                selectedCategory === category.nama_kategori
+                selectedCategory === category.id_kategori
                   ? "primary"
                   : "outline-primary"
               }
-              onClick={() => onCategoryClick(category.nama_kategori)}
+              onClick={() => onCategoryClick(category.id_kategori)}
               className="category-button"
             >
               <Image
-                src={category.gambar_kategori || "/images/default-category.png"} // Default image if not provided
+                src={category.gambar_kategori || "/images/default-category.png"}
                 rounded
                 className="category-image mb-2"
               />

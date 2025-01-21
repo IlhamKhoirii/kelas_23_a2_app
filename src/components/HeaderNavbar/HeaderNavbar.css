@@ -19,3 +19,56 @@
 .nav-link:hover {
     color: #2d7dd2;
 }
+
+/* Search Bar Styling */
+.search-bar input {
+    border-radius: 20px 0 0 20px;
+    border: none;
+    padding: 8px 12px;
+}
+
+.search-bar button {
+    border-radius: 0 20px 20px 0;
+    border: none;
+    background-color: #2d7dd2;
+    color: white;
+}
+
+/* Profile Section */
+.profile-section {
+    display: flex;
+    align-items: center;
+    color: #2d7dd2;
+}
+
+.profile-picture {
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
+    border: 2px solid #ddd; /* Border around profile picture */
+}
+
+/* Cart Icon */
+.cart-icon {
+    display: flex;
+    align-items: center;
+    position: relative;
+    color: #2d7dd2;
+}
+
+.cart-badge {
+    font-size: 12px;
+    line-height: 1;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: -5px;
+    right: -10px;
+}
