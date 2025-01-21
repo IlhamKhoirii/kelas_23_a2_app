@@ -62,9 +62,14 @@ const Checkout = () => {
     return cartItems.reduce((acc, item) => acc + item.harga * item.quantity, 0);
   };
 
+  const calculateTotalItems = () => {
+    return cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  };
+
   const shippingCost = 10000; // Example fixed shipping cost
   const subtotal = calculateSubtotal();
   const total = subtotal + shippingCost;
+  const totalItems = calculateTotalItems();
 
   const handleCheckout = async () => {
     if (selectedAddress && selectedPaymentMethod && selectedShippingMethod) {
@@ -74,7 +79,7 @@ const Checkout = () => {
           "http://localhost:5000/api/pesanan",
           {
             id_user: userId,
-            total_barang: cartItems.length,
+            total_barang: totalItems,
             subtotal_harga: subtotal,
             total_pembayaran: total,
             status: "tertunda",
@@ -85,12 +90,15 @@ const Checkout = () => {
         const orderId = orderResponse.data.pesanan.id_pesanan;
 
         // Create order details
-        await axios.post("http://localhost:5000/api/detail-pesanan", {
-          id_pesanan: orderId,
-          id_alamat: selectedAddress,
-          id_metode_pengiriman: selectedShippingMethod,
-          kuantitas: cartItems.reduce((acc, item) => acc + item.quantity, 0),
-        });
+        for (const item of cartItems) {
+          await axios.post("http://localhost:5000/api/detail-pesanan", {
+            id_pesanan: orderId,
+            id_produk: item.id_produk,
+            id_alamat: selectedAddress,
+            id_metode_pengiriman: selectedShippingMethod,
+            kuantitas: item.quantity,
+          });
+        }
 
         // Create payment transaction
         await axios.post("http://localhost:5000/api/transaksi-pembayaran", {
@@ -143,7 +151,7 @@ const Checkout = () => {
               <h4>Ringkasan Pesanan</h4>
               <div className="mt-3">
                 <p>Subtotal: Rp{subtotal.toLocaleString()}</p>
-                <p>Total Barang: {cartItems.length}</p>
+                <p>Total Barang: {totalItems}</p>
                 <p>Biaya Pengiriman: Rp{shippingCost.toLocaleString()}</p>
                 <hr />
                 <p className="fw-bold">

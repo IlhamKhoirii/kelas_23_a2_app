@@ -8,36 +8,34 @@ import {
     Alert,
     Spinner,
 } from "react-bootstrap";
+import PropTypes from "prop-types";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// State awal untuk reducer
 const initialState = { quantity: 1 };
 
-// Reducer untuk mengatur jumlah produk
 function quantityReducer(state, action) {
     switch (action.type) {
         case "increment":
-            return { quantity: Math.min(state.quantity + 1, action.stock) }; // Tidak melebihi stok
+            return { quantity: Math.min(state.quantity + 1, action.stock) };
         case "decrement":
-            return { quantity: Math.max(state.quantity - 1, 1) }; // Tidak kurang dari 1
+            return { quantity: Math.max(state.quantity - 1, 1) };
         case "set":
-            return { quantity: Math.max(1, Math.min(action.value, action.stock)) }; // Validasi input manual
+            return { quantity: Math.max(1, Math.min(action.value, action.stock)) };
         default:
-            throw new Error("Aksi tidak valid");
+            throw new Error("Invalid action type");
     }
 }
 
 const ProductDetailModal = ({ show, onHide, productId, addToCart }) => {
     const [product, setProduct] = useState(null);
     const [state, dispatch] = useReducer(quantityReducer, initialState);
-    const [loading, setLoading] = useState(false); // State untuk loading
-    const [error, setError] = useState(null); // State untuk menangkap error
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         if (productId) {
-            // Ambil detail produk dari backend berdasarkan ID
             const fetchProduct = async () => {
                 setLoading(true);
                 setError(null);
@@ -45,7 +43,7 @@ const ProductDetailModal = ({ show, onHide, productId, addToCart }) => {
                     const response = await axios.get(
                         `http://localhost:5000/api/produk/${productId}`
                     );
-                    setProduct(response.data); // Pastikan data dari API sesuai dengan model Produk.js
+                    setProduct(response.data);
                 } catch (err) {
                     setError("Gagal memuat detail produk. Silakan coba lagi.");
                     console.error("Error:", err.message);
@@ -57,19 +55,19 @@ const ProductDetailModal = ({ show, onHide, productId, addToCart }) => {
         }
     }, [productId]);
 
-    // Fungsi untuk menambahkan produk ke keranjang
     const handleAddToCart = () => {
         if (!product) return;
 
-        addToCart(product, state.quantity);
-
-        // Tampilkan notifikasi sukses menggunakan toastify
-        toast.success("Barang berhasil ditambahkan dalam Keranjang!");
-
-        // Tutup modal setelah menambahkan ke keranjang
-        setTimeout(() => {
-            onHide();
-        }, 2000);
+        if (typeof addToCart === "function") {
+            addToCart(product, state.quantity);
+            toast.success("Barang berhasil ditambahkan dalam Keranjang!");
+            setTimeout(() => {
+                onHide();
+            }, 2000);
+        } else {
+            console.error("addToCart is not a function");
+            toast.error("Terjadi kesalahan saat menambahkan produk ke keranjang.");
+        }
     };
 
     if (!show) return null;
@@ -96,13 +94,11 @@ const ProductDetailModal = ({ show, onHide, productId, addToCart }) => {
                     {error && <Alert variant="danger">{error}</Alert>}
                     {product && !loading && (
                         <>
-                            {/* Gambar produk */}
                             <Image
                                 src={`http://localhost:5000/uploads/${product.gambar}`}
                                 fluid
                                 className="mb-3"
                             />
-                            {/* Detail produk */}
                             <p>
                                 <strong>Harga:</strong> Rp
                                 {parseFloat(product.harga).toLocaleString()}
@@ -116,7 +112,6 @@ const ProductDetailModal = ({ show, onHide, productId, addToCart }) => {
                             <p>
                                 <strong>Terjual:</strong> {product.terjual}
                             </p>
-                            {/* Input untuk jumlah produk */}
                             <InputGroup className="mb-3">
                                 <Button
                                     variant="outline-secondary"
@@ -150,9 +145,7 @@ const ProductDetailModal = ({ show, onHide, productId, addToCart }) => {
                         </>
                     )}
                 </Modal.Body>
-                
                 <Modal.Footer>
-                    {/* Tombol tambah ke keranjang */}
                     <Button
                         variant="primary"
                         onClick={handleAddToCart}
@@ -162,11 +155,17 @@ const ProductDetailModal = ({ show, onHide, productId, addToCart }) => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-
-            {/* Toast Container */}
             <ToastContainer />
         </>
     );
+};
+
+// Validasi prop dengan PropTypes
+ProductDetailModal.propTypes = {
+    show: PropTypes.bool.isRequired,
+    onHide: PropTypes.func.isRequired,
+    productId: PropTypes.number.isRequired,
+    addToCart: PropTypes.func.isRequired,
 };
 
 export default ProductDetailModal;
