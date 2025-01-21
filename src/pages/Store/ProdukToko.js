@@ -5,11 +5,10 @@ import HeaderNavbar from "../../components/HeaderNavbar/HeaderNavbar";
 import UserProfileModal from "../Profile/UserProfileModal";
 import ProductDetailModal from "../Product/ProductDetailModal";
 import CategorySlider from "../../components/Slider/CategorySlider";
+import FooterUser from "../../components/FooterUser/FooterUser";
 import { UserContext } from "../../context/UserContext";
 import { CartContext } from "../../context/CartContext";
 import './ProdukToko.css';
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 
 const ProdukToko = () => {
   const { profilePicture } = useContext(UserContext);
@@ -51,7 +50,9 @@ const ProdukToko = () => {
   };
 
   const handleCategoryClick = (categoryId) => {
-    setSelectedCategory(categoryId);
+    setSelectedCategory((prevCategory) =>
+      prevCategory === categoryId ? null : categoryId
+    );
   };
 
   const filteredProducts = selectedCategory
@@ -63,60 +64,60 @@ const ProdukToko = () => {
   }
 
   return (
-    <div className="home-container">
-      {/* Header */}
-      <HeaderNavbar
-        profilePicture={profilePicture}
-        cartItems={cartItems}
-        handleProfileClick={handleProfileClick}
-      />
-
-      {/* Category Slider */}
-      <Container className="mb-4">
-        <h2 className="text-start">Kategori</h2>
-        <CategorySlider
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onCategoryClick={handleCategoryClick}
+    <div className="store-container">
+      <div className="content-wrap">
+        {/* Header */}
+        <HeaderNavbar
+          profilePicture={profilePicture}
+          cartItems={cartItems}
+          handleProfileClick={handleProfileClick}
         />
-      </Container>
 
-      {/* Products */}
-      <Container>
-        <Row>
-          {filteredProducts.map((product) => (
-            <Col md={4} key={product.id_produk} className="mb-4">
-              <Card onClick={() => handleProductClick(product)}>
-                <Card.Img variant="top" src={`http://localhost:5000/uploads/${product.gambar}`} />
-                <Card.Body>
-                  <Card.Title>{product.nama_produk}</Card.Title>
-                  <Card.Text>
-                    Harga: Rp{parseFloat(product.harga).toLocaleString()}
-                  </Card.Text>
-                  <Card.Text>Stok: {product.stok}</Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Container>
+        {/* Category Slider */}
+        <Container className="mb-4">
+          <h2 className="text-start category-section-title">Kategori</h2>
+          <CategorySlider
+            selectedCategory={selectedCategory}
+            onCategoryClick={handleCategoryClick}
+          />
+        </Container>
 
-      {/* Modals */}
-      {showProductModal && (
-        <ProductDetailModal
-          show={showProductModal}
-          onHide={handleCloseProductModal}
-          productId={selectedProduct.id_produk}
-        />
-      )}
-      {showProfileModal && (
-        <UserProfileModal show={showProfileModal} onHide={handleCloseModal} />
-      )}
+        {/* Products */}
+        <Container>
+          <Row>
+            {filteredProducts.map((product) => (
+              <Col md={4} key={product.id_produk} className="mb-4">
+                <Card onClick={() => handleProductClick(product)}>
+                  <Card.Img variant="top" src={`http://localhost:5000/uploads/${product.gambar}`} />
+                  <Card.Body>
+                    <Card.Title>{product.nama_produk}</Card.Title>
+                    <Card.Text>
+                      Harga: Rp{parseFloat(product.harga).toLocaleString()}
+                    </Card.Text>
+                    <Card.Text>Stok: {product.stok}</Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </Container>
+
+        {/* Modals */}
+        {showProductModal && (
+          <ProductDetailModal
+            show={showProductModal}
+            onHide={handleCloseProductModal}
+            productId={selectedProduct.id_produk}
+            addToCart={addToCart}
+          />
+        )}
+        {showProfileModal && (
+          <UserProfileModal show={showProfileModal} onHide={handleCloseModal} />
+        )}
+      </div>
 
       {/* Footer */}
-      <footer className="footer">
-        <p>&copy; 2024 Toko Kelontong. All rights reserved.</p>
-      </footer>
+      <FooterUser />
     </div>
   );
 };
