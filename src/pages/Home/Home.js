@@ -5,6 +5,7 @@ import HeaderNavbar from "../../components/HeaderNavbar/HeaderNavbar";
 import UserProfileModal from "../Profile/UserProfileModal";
 import ProductDetailModal from "../Product/ProductDetailModal";
 import CategorySlider from "../../components/Slider/CategorySlider";
+import FooterUser from "../../components/FooterUser/FooterUser";
 import { UserContext } from "../../context/UserContext";
 import { CartContext } from "../../context/CartContext";
 import "./Home.css";
@@ -143,9 +144,7 @@ const Home = () => {
       )}
 
       {/* Footer */}
-      <footer className="footer">
-        <p>&copy; 2024 Toko Kelontong. All rights reserved.</p>
-      </footer>
+      <FooterUser />
     </div>
   );
 };

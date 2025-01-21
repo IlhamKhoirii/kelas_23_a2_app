@@ -1,9 +1,28 @@
 .footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    padding: 10px 0;
+    padding: 20px 0;
     background-color: #0080ff;
+    color: white;
     border-top: 1px solid #e7e7e7;
-    position: fixed;
     width: 100%;
+    position: relative;
     bottom: 0;
+  }
+  
+  .footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .content-wrap {
+    flex: 1;
   }
