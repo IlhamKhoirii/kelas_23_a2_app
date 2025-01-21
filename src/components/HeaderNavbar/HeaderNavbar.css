@@ -20,7 +20,12 @@
     color: #2d7dd2;
 }
 
-/* Search Bar Styling */
+/* Search Bar */
+.search-bar {
+    flex: 1;
+    max-width: 400px;
+}
+
 .search-bar input {
     border-radius: 20px 0 0 20px;
     border: none;

@@ -1,5 +1,7 @@
 .category-slider {
   padding: 20px 0;
+  position: relative;
+  z-index: 1; /* Ensure the slider is above other elements */
 }
 
 .category-slider-item {

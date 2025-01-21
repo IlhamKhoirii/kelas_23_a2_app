@@ -69,79 +69,81 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {/* Header */}
-      <HeaderNavbar
-        profilePicture={profilePicture}
-        cartItems={cartItems}
-        handleProfileClick={handleProfileClick}
-      />
-
-      {/* Carousel */}
-      <Carousel className="mb-4">
-        <Carousel.Item>
-          <img
-            className="d-block w-100"
-            src="/images/slider1.jpg"
-            alt="First slide"
-          />
-        </Carousel.Item>
-        <Carousel.Item>
-          <img
-            className="d-block w-100"
-            src="/images/slider2.jpg"
-            alt="Second slide"
-          />
-        </Carousel.Item>
-        <Carousel.Item>
-          <img
-            className="d-block w-100"
-            src="/images/slider3.jpeg"
-            alt="Third slide"
-          />
-        </Carousel.Item>
-      </Carousel>
-
-      {/* Category Slider */}
-      <Container className="mb-4">
-        <h2 className="text-start category-section-title">Kategori</h2>
-        <CategorySlider
-          selectedCategory={selectedCategory}
-          onCategoryClick={handleCategoryClick}
+      <div className="content-wrap">
+        {/* Header */}
+        <HeaderNavbar
+          profilePicture={profilePicture}
+          cartItems={cartItems}
+          handleProfileClick={handleProfileClick}
         />
-      </Container>
 
-      {/* Products */}
-      <Container>
-        <Row>
-          {filteredProducts.map((product) => (
-            <Col md={4} key={product.id_produk} className="mb-4">
-              <Card onClick={() => handleProductClick(product)}>
-                <Card.Img variant="top" src={`http://localhost:5000/uploads/${product.gambar}`} />
-                <Card.Body>
-                  <Card.Title>{product.nama_produk}</Card.Title>
-                  <Card.Text>
-                    Harga: Rp{parseFloat(product.harga).toLocaleString()}
-                  </Card.Text>
-                  <Card.Text>Stok: {product.stok}</Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Container>
+        {/* Carousel */}
+        <Carousel className="mb-4">
+          <Carousel.Item>
+            <img
+              className="d-block w-100"
+              src="/images/slider1.jpg"
+              alt="First slide"
+            />
+          </Carousel.Item>
+          <Carousel.Item>
+            <img
+              className="d-block w-100"
+              src="/images/slider2.jpg"
+              alt="Second slide"
+            />
+          </Carousel.Item>
+          <Carousel.Item>
+            <img
+              className="d-block w-100"
+              src="/images/slider3.jpeg"
+              alt="Third slide"
+            />
+          </Carousel.Item>
+        </Carousel>
 
-      {/* Modals */}
-      {showProductModal && (
-        <ProductDetailModal
-          show={showProductModal}
-          onHide={handleCloseProductModal}
-          productId={selectedProduct.id_produk}
-          addToCart={addToCart}
-        />
-      )}
-      {showProfileModal && (
-        <UserProfileModal show={showProfileModal} onHide={handleCloseModal} />
-      )}
+        {/* Category Slider */}
+        <Container className="mb-4">
+          <h2 className="text-start category-section-title">Kategori</h2>
+          <CategorySlider
+            selectedCategory={selectedCategory}
+            onCategoryClick={handleCategoryClick}
+          />
+        </Container>
+
+        {/* Products */}
+        <Container>
+          <Row>
+            {filteredProducts.map((product) => (
+              <Col md={4} key={product.id_produk} className="mb-4">
+                <Card onClick={() => handleProductClick(product)}>
+                  <Card.Img variant="top" src={`http://localhost:5000/uploads/${product.gambar}`} />
+                  <Card.Body>
+                    <Card.Title>{product.nama_produk}</Card.Title>
+                    <Card.Text>
+                      Harga: Rp{parseFloat(product.harga).toLocaleString()}
+                    </Card.Text>
+                    <Card.Text>Stok: {product.stok}</Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </Container>
+
+        {/* Modals */}
+        {showProductModal && (
+          <ProductDetailModal
+            show={showProductModal}
+            onHide={handleCloseProductModal}
+            productId={selectedProduct.id_produk}
+            addToCart={addToCart}
+          />
+        )}
+        {showProfileModal && (
+          <UserProfileModal show={showProfileModal} onHide={handleCloseModal} />
+        )}
+      </div>
 
       {/* Footer */}
       <FooterUser />
