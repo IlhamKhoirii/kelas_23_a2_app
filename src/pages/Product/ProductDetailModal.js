@@ -9,6 +9,8 @@ import {
     Spinner,
 } from "react-bootstrap";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // State awal untuk reducer
 const initialState = { quantity: 1 };
@@ -32,7 +34,6 @@ const ProductDetailModal = ({ show, onHide, productId, addToCart }) => {
     const [state, dispatch] = useReducer(quantityReducer, initialState);
     const [loading, setLoading] = useState(false); // State untuk loading
     const [error, setError] = useState(null); // State untuk menangkap error
-    const [showNotification, setShowNotification] = useState(false); // State untuk notifikasi sukses
 
     useEffect(() => {
         if (productId) {
@@ -62,110 +63,109 @@ const ProductDetailModal = ({ show, onHide, productId, addToCart }) => {
 
         addToCart(product, state.quantity);
 
-        // Tampilkan notifikasi sukses
-        setShowNotification(true);
+        // Tampilkan notifikasi sukses menggunakan toastify
+        toast.success("Barang berhasil ditambahkan dalam Keranjang!");
+
+        // Tutup modal setelah menambahkan ke keranjang
         setTimeout(() => {
-            setShowNotification(false); // Sembunyikan notifikasi setelah 2 detik
-            onHide(); // Tutup modal setelah menambahkan ke keranjang
+            onHide();
         }, 2000);
     };
 
     if (!show) return null;
 
     return (
-        <Modal show={show} onHide={onHide} centered>
-            <Modal.Header closeButton>
-                <Modal.Title>
-                    {loading
-                        ? "Memuat..."
-                        : product
-                        ? product.nama_produk
-                        : "Produk Tidak Ditemukan"}
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                {loading && (
-                    <div className="text-center">
-                        <Spinner animation="border" variant="primary" />
-                        <p>Memuat detail produk...</p>
-                    </div>
-                )}
-                {error && <Alert variant="danger">{error}</Alert>}
-                {product && !loading && (
-                    <>
-                        {/* Gambar produk */}
-                        <Image
-                            src={`http://localhost:5000/uploads/${product.gambar}`}
-                            fluid
-                            className="mb-3"
-                        />
-                        {/* Detail produk */}
-                        <p>
-                            <strong>Harga:</strong> Rp
-                            {parseFloat(product.harga).toLocaleString()}
-                        </p>
-                        <p>
-                            <strong>Stok:</strong> {product.stok}
-                        </p>
-                        <p>
-                            <strong>Deskripsi:</strong> {product.deskripsi}
-                        </p>
-                        <p>
-                            <strong>Terjual:</strong> {product.terjual}
-                        </p>
-                        {/* Input untuk jumlah produk */}
-                        <InputGroup className="mb-3">
-                            <Button
-                                variant="outline-secondary"
-                                onClick={() => dispatch({ type: "decrement" })}
-                            >
-                                -
-                            </Button>
-                            <FormControl
-                                type="number"
-                                value={state.quantity}
-                                onChange={(e) =>
-                                    dispatch({
-                                        type: "set",
-                                        value: Number(e.target.value),
-                                        stock: product.stok,
-                                    })
-                                }
+        <>
+            <Modal show={show} onHide={onHide} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        {loading
+                            ? "Memuat..."
+                            : product
+                            ? product.nama_produk
+                            : "Produk Tidak Ditemukan"}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {loading && (
+                        <div className="text-center">
+                            <Spinner animation="border" variant="primary" />
+                            <p>Memuat detail produk...</p>
+                        </div>
+                    )}
+                    {error && <Alert variant="danger">{error}</Alert>}
+                    {product && !loading && (
+                        <>
+                            {/* Gambar produk */}
+                            <Image
+                                src={`http://localhost:5000/uploads/${product.gambar}`}
+                                fluid
+                                className="mb-3"
                             />
-                            <Button
-                                variant="outline-secondary"
-                                onClick={() =>
-                                    dispatch({
-                                        type: "increment",
-                                        stock: product.stok,
-                                    })
-                                }
-                            >
-                                +
-                            </Button>
-                        </InputGroup>
-                    </>
-                )}
-            </Modal.Body>
-            
-            <Modal.Footer>
-                {/* Tombol tambah ke keranjang */}
-                <Button
-                    variant="primary"
-                    onClick={handleAddToCart}
-                    disabled={!product || loading}
-                >
-                    Tambah ke Keranjang
-                </Button>
-            </Modal.Footer>
+                            {/* Detail produk */}
+                            <p>
+                                <strong>Harga:</strong> Rp
+                                {parseFloat(product.harga).toLocaleString()}
+                            </p>
+                            <p>
+                                <strong>Stok:</strong> {product.stok}
+                            </p>
+                            <p>
+                                <strong>Deskripsi:</strong> {product.deskripsi}
+                            </p>
+                            <p>
+                                <strong>Terjual:</strong> {product.terjual}
+                            </p>
+                            {/* Input untuk jumlah produk */}
+                            <InputGroup className="mb-3">
+                                <Button
+                                    variant="outline-secondary"
+                                    onClick={() => dispatch({ type: "decrement" })}
+                                >
+                                    -
+                                </Button>
+                                <FormControl
+                                    type="number"
+                                    value={state.quantity}
+                                    onChange={(e) =>
+                                        dispatch({
+                                            type: "set",
+                                            value: Number(e.target.value),
+                                            stock: product.stok,
+                                        })
+                                    }
+                                />
+                                <Button
+                                    variant="outline-secondary"
+                                    onClick={() =>
+                                        dispatch({
+                                            type: "increment",
+                                            stock: product.stok,
+                                        })
+                                    }
+                                >
+                                    +
+                                </Button>
+                            </InputGroup>
+                        </>
+                    )}
+                </Modal.Body>
+                
+                <Modal.Footer>
+                    {/* Tombol tambah ke keranjang */}
+                    <Button
+                        variant="primary"
+                        onClick={handleAddToCart}
+                        disabled={!product || loading}
+                    >
+                        Tambah ke Keranjang
+                    </Button>
+                </Modal.Footer>
+            </Modal>
 
-            {/* Notifikasi berhasil ditambahkan */}
-            {showNotification && (
-                <Alert variant="success" className="notification-alert">
-                    Barang berhasil ditambahkan ke keranjang!
-                </Alert>
-            )}
-        </Modal>
+            {/* Toast Container */}
+            <ToastContainer />
+        </>
     );
 };
 

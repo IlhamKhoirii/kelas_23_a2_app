@@ -7,6 +7,7 @@ export const UserProvider = ({ children }) => {
     const [namaPengguna, setNamaPengguna] = useState("");
     const [emailPengguna, setEmailPengguna] = useState("");
     const [alamat, setAlamat] = useState("");
+    const [noTelp, setNoTelp] = useState("");
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
@@ -19,6 +20,7 @@ export const UserProvider = ({ children }) => {
                     setUserId(userData.id_user);
                     setNamaPengguna(userData.nama_user);
                     setEmailPengguna(userData.email);
+                    setNoTelp(userData.no_telp);
                     // Fetch alamat data
                     const alamatResponse = await axios.get(`http://localhost:5000/api/alamatpelanggan/${user.id_user}`);
                     const alamatData = alamatResponse.data;
@@ -44,15 +46,21 @@ export const UserProvider = ({ children }) => {
         setAlamat(newAlamat);
     };
 
+    const updateNoTelp = (newNoTelp) => {
+        setNoTelp(newNoTelp);
+    };
+
     return (
         <UserContext.Provider value={{
             namaPengguna,
             emailPengguna,
             alamat,
+            noTelp,
             userId,
             updateNamaPengguna,
             updateEmailPengguna,
-            updateAlamat
+            updateAlamat,
+            updateNoTelp
         }}>
             {children}
         </UserContext.Provider>

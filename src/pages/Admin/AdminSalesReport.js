@@ -1,54 +1,44 @@
-// src/components/Admin/AdminSalesReport.js
 import React, { useState, useEffect } from "react";
-import { Container, Navbar, Nav, Dropdown, Table, Form, Button } from "react-bootstrap";
-import { FaUserCircle } from "react-icons/fa";
+import { Container, Table, Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import NavbarAdmin from "../../components/NavbarAdmin/NavbarAdmin";
+import axios from "axios";
 import "./AdminSalesReport.css";
 
 const AdminSalesReport = () => {
     const navigate = useNavigate();
-    const [salesData] = useState([
-        // Mock data for sales (in a real app, fetch this data from an API)
-        {
-            id: 1,
-            username: "john_doe",
-            productCode: "P001",
-            orderDate: "2024-11-07",
-            orderTime: "10:30",
-            totalPrice: 15000,
-        },
-        {
-            id: 2,
-            username: "jane_smith",
-            productCode: "P002",
-            orderDate: "2024-11-07",
-            orderTime: "14:45",
-            totalPrice: 25000,
-        },
-    ]);
-
+    const [salesData, setSalesData] = useState([]);
     const [todaySales, setTodaySales] = useState(0);
     const [itemsSoldToday, setItemsSoldToday] = useState(0);
     const [filterMonth, setFilterMonth] = useState(new Date().getMonth() + 1);
     const [filterYear, setFilterYear] = useState(new Date().getFullYear());
 
-    // Calculate today's sales
+    useEffect(() => {
+        const fetchSalesData = async () => {
+            try {
+                const response = await axios.get("http://localhost:5000/api/detailpesanan");
+                setSalesData(response.data);
+            } catch (error) {
+                console.error("Error fetching sales data:", error);
+            }
+        };
+
+        fetchSalesData();
+    }, []);
+
     useEffect(() => {
         const today = new Date().toISOString().split("T")[0];
-        const todaySalesData = salesData.filter(sale => sale.orderDate === today);
+        const todaySalesData = salesData.filter(sale => sale.pesanan.dibuat_pada.split("T")[0] === today);
         setTodaySales(todaySalesData.length);
-        setItemsSoldToday(todaySalesData.reduce((acc, sale) => acc + 1, 0));
+        setItemsSoldToday(todaySalesData.reduce((acc, sale) => acc + sale.kuantitas, 0));
     }, [salesData]);
 
-    // Handle month/year change
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         if (name === "month") setFilterMonth(value);
         if (name === "year") setFilterYear(value);
     };
 
-    // Handle logout
     const handleLogout = () => {
         localStorage.removeItem("authToken");
         navigate("/login");
@@ -56,10 +46,8 @@ const AdminSalesReport = () => {
 
     return (
         <>
-            {/* Navbar Header */}
             <NavbarAdmin handleLogout={handleLogout} />
 
-            {/* Sales Report Content */}
             <Container className="admin-sales-report mt-4">
                 <h2>Laporan Penjualan</h2>
                 <p>Hari ini: <strong>{new Date().toLocaleDateString()}</strong></p>
@@ -75,7 +63,6 @@ const AdminSalesReport = () => {
                     </div>
                 </div>
 
-                {/* Filters for Month and Year */}
                 <Form className="filter-form mb-4">
                     <Form.Group controlId="filterMonth">
                         <Form.Label>Bulan</Form.Label>
@@ -110,7 +97,6 @@ const AdminSalesReport = () => {
                     </Button>
                 </Form>
 
-                {/* Sales Table */}
                 <Table striped bordered hover responsive>
                     <thead>
                         <tr>
@@ -124,13 +110,13 @@ const AdminSalesReport = () => {
                     </thead>
                     <tbody>
                         {salesData.map((sale, index) => (
-                            <tr key={sale.id}>
+                            <tr key={sale.id_detail_pesanan}>
                                 <td>{index + 1}</td>
-                                <td>{sale.username}</td>
-                                <td>{sale.productCode}</td>
-                                <td>{sale.orderDate}</td>
-                                <td>{sale.orderTime}</td>
-                                <td>Rp {sale.totalPrice.toLocaleString()}</td>
+                                <td>{sale.pesanan.user.nama_user}</td>
+                                <td>{sale.produk.kode_produk}</td>
+                                <td>{new Date(sale.pesanan.dibuat_pada).toLocaleDateString()}</td>
+                                <td>{new Date(sale.pesanan.dibuat_pada).toLocaleTimeString()}</td>
+                                <td>Rp {sale.kuantitas * sale.produk.harga.toLocaleString()}</td>
                             </tr>
                         ))}
                     </tbody>

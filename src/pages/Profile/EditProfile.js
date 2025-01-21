@@ -1,10 +1,12 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Form, Button, Container, Alert } from "react-bootstrap";
+import { Form, Button, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import { CartContext } from "../../context/CartContext"; // Import CartContext
 import axios from "axios";
 import HeaderNavbar from "../../components/HeaderNavbar/HeaderNavbar"; // Import HeaderNavbar
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./EditProfile.css"; // Optional: For custom styling if needed
 
 const EditProfile = () => {
@@ -15,6 +17,8 @@ const EditProfile = () => {
         updateEmailPengguna,
         alamat,
         updateAlamat,
+        noTelp,
+        updateNoTelp,
         userId
     } = useContext(UserContext);
 
@@ -23,14 +27,15 @@ const EditProfile = () => {
     const [editedNamaPengguna, setEditedNamaPengguna] = useState(namaPengguna);
     const [editedEmailPengguna, setEditedEmailPengguna] = useState(emailPengguna);
     const [editedAlamat, setEditedAlamat] = useState(alamat);
-    const [showSuccessMessage, setShowSuccessMessage] = useState(false); // State for showing the success message
+    const [editedNoTelp, setEditedNoTelp] = useState(noTelp);
     const navigate = useNavigate();
 
     useEffect(() => {
         setEditedNamaPengguna(namaPengguna);
         setEditedEmailPengguna(emailPengguna);
         setEditedAlamat(alamat);
-    }, [namaPengguna, emailPengguna, alamat]);
+        setEditedNoTelp(noTelp);
+    }, [namaPengguna, emailPengguna, alamat, noTelp]);
 
     const handleSave = async (e) => {
         e.preventDefault();
@@ -38,7 +43,8 @@ const EditProfile = () => {
             // Update profile pengguna
             await axios.put(`http://localhost:5000/api/users/profile/${userId}`, {
                 nama_user: editedNamaPengguna,
-                email: editedEmailPengguna
+                email: editedEmailPengguna,
+                no_telp: editedNoTelp
             });
 
             // Update alamat pelanggan
@@ -49,14 +55,18 @@ const EditProfile = () => {
             updateNamaPengguna(editedNamaPengguna);
             updateEmailPengguna(editedEmailPengguna);
             updateAlamat(editedAlamat);
+            updateNoTelp(editedNoTelp);
 
-            // Show success message overlay
-            setShowSuccessMessage(true);
+            // Show success message using toast
+            toast.success("Akun berhasil diperbarui!");
 
-            // Automatically hide the overlay after a few seconds
-            setTimeout(() => setShowSuccessMessage(false), 3000);
+            // Automatically navigate to profile after a few seconds (optional)
+            // setTimeout(() => {
+            //     navigate("/profile");
+            // }, 3000);
         } catch (error) {
             console.error("Error updating profile:", error);
+            toast.error("Gagal memperbarui akun. Silakan coba lagi.");
         }
     };
 
@@ -87,6 +97,16 @@ const EditProfile = () => {
                         />
                     </Form.Group>
 
+                    <Form.Group className="mb-3" controlId="formNoTelp">
+                        <Form.Label>Nomor Telepon</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={editedNoTelp}
+                            onChange={(e) => setEditedNoTelp(e.target.value)}
+                            required
+                        />
+                    </Form.Group>
+
                     <Form.Group className="mb-3" controlId="formEmailPengguna">
                         <Form.Label>Email</Form.Label>
                         <Form.Control
@@ -112,16 +132,10 @@ const EditProfile = () => {
                         Update Akun
                     </Button>
                 </Form>
-
-                {/* Notification Overlay */}
-                {showSuccessMessage && (
-                    <div className="notification-overlay">
-                        <Alert variant="success" className="text-center">
-                            Akun berhasil diperbarui
-                        </Alert>
-                    </div>
-                )}
             </Container>
+
+            {/* Toast Container */}
+            <ToastContainer />
         </div>
     );
 };
