@@ -8,6 +8,7 @@ import HeaderNavbar from "../../components/HeaderNavbar/HeaderNavbar";
 import { UserContext } from "../../context/UserContext";
 import { CartContext } from "../../context/CartContext";
 import UserProfileModal from "../Profile/UserProfileModal";
+import FooterUser from "../../components/FooterUser/FooterUser";
 import axios from "axios";
 import "./OrderHistory.css"; // Import CSS untuk styling
 
@@ -51,14 +52,14 @@ const OrderHistory = () => {
         <Container className="mt-4">
           <h2>Riwayat Pesanan</h2>
           <div className="d-flex justify-content-start my-3">
-            {["Semua", "Belum Bayar", "Sedang Dikemas", "Dikirim", "Selesai", "Dibatalkan", "Pengembalian Barang"].map((status) => (
+            {["Semua", "tertunda", "diproses", "dikirim", "selesai"].map((status) => (
               <Button
                 key={status}
                 variant={selectedStatus === status ? "primary" : "outline-primary"}
                 onClick={() => setSelectedStatus(status)}
                 className="me-2"
               >
-                {status}
+                {status.charAt(0).toUpperCase() + status.slice(1)}
               </Button>
             ))}
           </div>
@@ -70,7 +71,9 @@ const OrderHistory = () => {
                 <th>Order ID</th>
                 <th>Tanggal</th>
                 <th>Status</th>
-                <th>Total</th>
+                <th>Nama Barang</th>
+                <th>Total Barang</th>
+                <th>Total Harga</th>
               </tr>
             </thead>
             <tbody>
@@ -79,7 +82,15 @@ const OrderHistory = () => {
                   <td>{order.id_pesanan}</td>
                   <td>{new Date(order.dibuat_pada).toLocaleDateString()}</td>
                   <td>{order.status}</td>
+                  <td>
+                    {order.detailPesanan && order.detailPesanan.map((detail) => (
+                      <div key={detail.id_detail_pesanan}>
+                        {detail.produk.nama_produk} (x{detail.kuantitas})
+                      </div>
+                    ))}
+                  </td>
                   <td>{order.total_barang.toLocaleString()}</td>
+                  <td>Rp{order.total_pembayaran.toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
@@ -91,9 +102,7 @@ const OrderHistory = () => {
       </div>
 
       {/* Footer */}
-      <footer className="footer">
-        <p>&copy; 2024 Toko Kelontong. All rights reserved.</p>
-      </footer>
+      <FooterUser />
     </div>
   );
 };
