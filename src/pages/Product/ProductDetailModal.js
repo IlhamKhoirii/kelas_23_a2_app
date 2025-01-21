@@ -147,6 +147,7 @@ const ProductDetailModal = ({ show, onHide, productId, addToCart }) => {
                     </>
                 )}
             </Modal.Body>
+            
             <Modal.Footer>
                 {/* Tombol tambah ke keranjang */}
                 <Button

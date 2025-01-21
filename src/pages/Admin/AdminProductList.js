@@ -4,6 +4,7 @@ import { FaEdit, FaTrash, FaPlus, FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
+import NavbarAdmin from "../../components/NavbarAdmin/NavbarAdmin";
 import 'react-toastify/dist/ReactToastify.css';
 
 const AdminProductList = () => {
@@ -12,10 +13,12 @@ const AdminProductList = () => {
     const [categories, setCategories] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [showCategoryModal, setShowCategoryModal] = useState(false);
+    const [showDeleteCategoryModal, setShowDeleteCategoryModal] = useState(false); // State untuk modal hapus kategori
     const [productForm, setProductForm] = useState({ id_kategori: "", nama_produk: "", deskripsi: "", harga: "", stok: "", gambar: null });
     const [categoryForm, setCategoryForm] = useState({ nama_kategori: "", deskripsi: "", gambar_kategori: null });
     const [isEditing, setIsEditing] = useState(false);
     const [editProductId, setEditProductId] = useState(null);
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null); // State untuk kategori yang dipilih untuk dihapus
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -57,8 +60,13 @@ const AdminProductList = () => {
         setShowCategoryModal(true);
     };
 
+    const handleShowDeleteCategoryModal = () => {
+        setShowDeleteCategoryModal(true);
+    };
+
     const handleCloseModal = () => setShowModal(false);
     const handleCloseCategoryModal = () => setShowCategoryModal(false);
+    const handleCloseDeleteCategoryModal = () => setShowDeleteCategoryModal(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -136,6 +144,18 @@ const AdminProductList = () => {
         }
     };
 
+    const handleDeleteCategory = async () => {
+        try {
+            await axios.delete(`http://localhost:5000/api/kategori/${selectedCategoryId}`);
+            setCategories(categories.filter((category) => category.id_kategori !== selectedCategoryId));
+            toast.success("Kategori Berhasil Dihapus");
+        } catch (error) {
+            console.error("Error deleting category:", error);
+            toast.error("Gagal menghapus kategori");
+        }
+        handleCloseDeleteCategoryModal();
+    };
+
     const handleLogout = () => {
         localStorage.removeItem("authToken");
         sessionStorage.clear();
@@ -145,33 +165,7 @@ const AdminProductList = () => {
     return (
         <div>
             {/* Admin Dashboard Navbar */}
-            <Navbar bg="dark" variant="dark" expand="lg">
-                <Container>
-                    <Navbar.Brand>Admin Dashboard</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto">
-                            <Nav.Link onClick={() => navigate("/admin/dashboard")}>Beranda</Nav.Link>
-                            <Nav.Link onClick={() => navigate("/admin/products")}>Produk</Nav.Link>
-                            <Nav.Link onClick={() => navigate("/admin/orders")}>Pemesanan</Nav.Link>
-                            <Nav.Link onClick={() => navigate("/admin/users")}>Pengguna</Nav.Link>
-                            <Nav.Link onClick={() => navigate("/admin/sales")}>Laporan Penjualan</Nav.Link>
-                        </Nav>
-                        <Dropdown align="end">
-                            <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                                <FaUserCircle size={24} />
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                <Dropdown.Item onClick={() => navigate("/admin-account")}>
-                                    Akun Admin
-                                </Dropdown.Item>
-                                <Dropdown.Divider />
-                                <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
+            <NavbarAdmin handleLogout={handleLogout} />
 
             {/* Product Management Section */}
             <Container className="mt-4">
@@ -179,8 +173,11 @@ const AdminProductList = () => {
                 <Button variant="primary" className="mb-3 me-2" onClick={() => handleShowModal()}>
                     <FaPlus /> Tambah Produk
                 </Button>
-                <Button variant="secondary" className="mb-3" onClick={() => handleShowCategoryModal()}>
+                <Button variant="secondary" className="mb-3 me-2" onClick={() => handleShowCategoryModal()}>
                     <FaPlus /> Tambah Kategori
+                </Button>
+                <Button variant="danger" className="mb-3" onClick={() => handleShowDeleteCategoryModal()}>
+                    <FaTrash /> Hapus Kategori
                 </Button>
 
                 {/* Products Table */}
@@ -350,6 +347,36 @@ const AdminProductList = () => {
                             </Form.Group>
                             <Button variant="primary" onClick={handleSaveCategory}>
                                 Tambah Kategori
+                            </Button>
+                        </Form>
+                    </Modal.Body>
+                </Modal>
+
+                {/* Modal for Deleting Category */}
+                <Modal show={showDeleteCategoryModal} onHide={handleCloseDeleteCategoryModal} centered>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Hapus Kategori</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                            <Form.Group controlId="formDeleteCategory" className="mb-3">
+                                <Form.Label>Pilih Kategori untuk Dihapus</Form.Label>
+                                <Form.Control
+                                    as="select"
+                                    value={selectedCategoryId}
+                                    onChange={(e) => setSelectedCategoryId(e.target.value)}
+                                    required
+                                >
+                                    <option value="">Pilih Kategori</option>
+                                    {categories.map((category) => (
+                                        <option key={category.id_kategori} value={category.id_kategori}>
+                                            {category.nama_kategori}
+                                        </option>
+                                    ))}
+                                </Form.Control>
+                            </Form.Group>
+                            <Button variant="danger" onClick={handleDeleteCategory}>
+                                Hapus Kategori
                             </Button>
                         </Form>
                     </Modal.Body>

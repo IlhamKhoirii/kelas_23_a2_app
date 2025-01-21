@@ -4,6 +4,7 @@ import { FaEdit, FaTrash, FaPlus, FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
+import NavbarAdmin from "../../components/NavbarAdmin/NavbarAdmin";
 import 'react-toastify/dist/ReactToastify.css';
 
 const AdminUserList = () => {
@@ -58,18 +59,30 @@ const AdminUserList = () => {
 
     const handleSaveUser = async () => {
         const { id_user, nama_user, email, alamat } = userForm;
-
+    
         try {
             if (isEditing) {
-                await axios.put(`http://localhost:5000/api/users/${id_user}`, { nama_user, email });
-                await axios.put(`http://localhost:5000/api/alamat-pelanggan/${id_user}`, { alamat });
+                // Cari alamat terkait id_user
+                const alamatUser = alamatPelanggan.find(alamatObj => alamatObj.id_user === id_user);
+    
+                if (alamatUser) {
+                    // Update user dan alamat
+                    await axios.put(`http://localhost:5000/api/users/${id_user}`, { nama_user, email });
+                    await axios.put(`http://localhost:5000/api/alamat-pelanggan/${alamatUser.id_alamat}`, { alamat });
+                } else {
+                    // Jika tidak ada alamat sebelumnya, tambahkan
+                    await axios.post("http://localhost:5000/api/alamat-pelanggan", { id_user, alamat });
+                }
                 toast.success("Berhasil Update");
             } else {
+                // Tambahkan user baru dan alamat
                 const userResponse = await axios.post("http://localhost:5000/api/users", { nama_user, email });
                 const newUser = userResponse.data;
                 await axios.post("http://localhost:5000/api/alamat-pelanggan", { id_user: newUser.id_user, alamat });
                 toast.success("Pengguna Berhasil Ditambahkan");
             }
+    
+            // Refresh data setelah perubahan
             const usersResponse = await axios.get("http://localhost:5000/api/users");
             setUsers(usersResponse.data);
             const alamatResponse = await axios.get("http://localhost:5000/api/alamat-pelanggan");
@@ -78,9 +91,9 @@ const AdminUserList = () => {
             console.error("Error saving user:", error);
             toast.error("Gagal menyimpan pengguna");
         }
-
+    
         handleCloseModal();
-    };
+    };    
 
     const handleDeleteUser = async (id) => {
         try {
@@ -102,33 +115,7 @@ const AdminUserList = () => {
     return (
         <div>
             {/* Admin Dashboard Navbar */}
-            <Navbar bg="dark" variant="dark" expand="lg">
-                <Container>
-                    <Navbar.Brand>Admin Dashboard</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto">
-                            <Nav.Link onClick={() => navigate("/admin/dashboard")}>Beranda</Nav.Link>
-                            <Nav.Link onClick={() => navigate("/admin/products")}>Produk</Nav.Link>
-                            <Nav.Link onClick={() => navigate("/admin/orders")}>Pemesanan</Nav.Link>
-                            <Nav.Link onClick={() => navigate("/admin/users")}>Pengguna</Nav.Link>
-                            <Nav.Link onClick={() => navigate("/admin/sales")}>Laporan Penjualan</Nav.Link>
-                        </Nav>
-                        <Dropdown align="end">
-                            <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                                <FaUserCircle size={24} />
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                <Dropdown.Item onClick={() => navigate("/admin-account")}>
-                                    Akun Admin
-                                </Dropdown.Item>
-                                <Dropdown.Divider />
-                                <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
+            <NavbarAdmin handleLogout={handleLogout} />
 
             {/* User Management Section */}
             <Container className="mt-4">

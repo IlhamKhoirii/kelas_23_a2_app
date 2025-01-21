@@ -61,7 +61,10 @@ const CategorySlider = ({ selectedCategory, onCategoryClick }) => {
     <div className="category-slider">
       <Slider {...sliderSettings}>
         {categories.map((category) => (
-          <div key={category.id_kategori} className="text-center category-slider-item">
+          <div
+            key={category.id_kategori}
+            className="text-center category-slider-item"
+          >
             <Button
               variant={
                 selectedCategory === category.id_kategori
@@ -72,8 +75,8 @@ const CategorySlider = ({ selectedCategory, onCategoryClick }) => {
               className="category-button"
             >
               <Image
-                src={category.gambar_kategori || "/images/default-category.png"}
-                rounded
+                src={`http://localhost:5000/uploads/${category.gambar_kategori}`}
+                fluid
                 className="category-image mb-2"
               />
               <h5 className="category-name">{category.nama_kategori}</h5>

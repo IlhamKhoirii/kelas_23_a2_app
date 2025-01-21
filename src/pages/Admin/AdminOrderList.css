@@ -1,5 +1,3 @@
-/* src/components/Admin/AdminOrderList.css */
-
 .admin-order-list h2 {
     font-weight: 600;
     margin-bottom: 20px;
@@ -21,4 +19,9 @@
     background-color: #6c757d;
     border: none;
     color: white;
+}
+
+.dropdown-status {
+    position: relative;
+    z-index: 1050; /* Ensure dropdown is above other elements */
 }

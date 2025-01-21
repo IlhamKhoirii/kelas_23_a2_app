@@ -23,14 +23,23 @@ const Checkout = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
+                // Fetch user data
                 const userResponse = await axios.get(`http://localhost:5000/api/users/${userId}`);
                 setUser(userResponse.data);
 
+                // Fetch addresses
                 const addressResponse = await axios.get(`http://localhost:5000/api/alamat/${userId}`);
                 setAddresses(addressResponse.data);
 
-                const paymentMethodsResponse = await axios.get("http://localhost:5000/api/metodepembayaran");
+                // Debugging log for addresses
+                console.log("Fetched addresses:", addressResponse.data);
+
+                // Fetch payment methods
+                const paymentMethodsResponse = await axios.get("http://localhost:5000/api/metode-pembayaran");
                 setPaymentMethods(paymentMethodsResponse.data);
+
+                // Debugging log for payment methods
+                console.log("Fetched payment methods:", paymentMethodsResponse.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -66,7 +75,7 @@ const Checkout = () => {
                     kuantitas: cartItems.map(item => item.quantity),
                 });
 
-                await axios.post("http://localhost:5000/api/transaksi-pembayaran", {
+                await axios.post("http://localhost:5000/api/metode-pembayaran", {
                     id_pesanan: orderId,
                     id_metode_pembayaran: selectedPaymentMethod,
                     jumlah_bayar: total,
@@ -127,6 +136,7 @@ const Checkout = () => {
                         <div className="p-3 border rounded">
                             <h4>Place Your Order</h4>
                             <Form className="mt-3">
+
                                 {/* Name */}
                                 <Form.Group className="mb-3" controlId="formName">
                                     <Form.Label>Your Name</Form.Label>
@@ -155,7 +165,7 @@ const Checkout = () => {
                                         onChange={(e) => setSelectedPaymentMethod(e.target.value)}
                                     >
                                         <option value="">Select Payment Method</option>
-                                        {paymentMethods.map((method) => (
+                                        {paymentMethods && paymentMethods.map((method) => (
                                             <option key={method.id_metode_pembayaran} value={method.id_metode_pembayaran}>
                                                 {method.nama_metode}
                                             </option>
@@ -171,7 +181,7 @@ const Checkout = () => {
                                         onChange={(e) => setSelectedAddress(e.target.value)}
                                     >
                                         <option value="">Select Address</option>
-                                        {addresses.map((address) => (
+                                        {addresses && addresses.map((address) => (
                                             <option key={address.id_alamat} value={address.id_alamat}>
                                                 {address.alamat_lengkap}
                                             </option>

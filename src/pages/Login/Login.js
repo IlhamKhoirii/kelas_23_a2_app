@@ -16,9 +16,12 @@ const Login = () => {
         try {
             const response = await axios.post(`${API_URL}`, { email, password });
             const user = response.data.user;
+
+            // Save user data and token to local storage
             localStorage.setItem("user", JSON.stringify(user));
             localStorage.setItem("authToken", response.data.token);
 
+            // Navigate based on user role
             if (user.role === "admin") {
                 navigate("/admin/dashboard");
             } else if (user.role === "pelanggan") {
