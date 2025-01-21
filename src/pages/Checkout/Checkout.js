@@ -17,8 +17,10 @@ const Checkout = () => {
   const [user, setUser] = useState({});
   const [addresses, setAddresses] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState([]);
+  const [shippingMethods, setShippingMethods] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState("");
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+  const [selectedShippingMethod, setSelectedShippingMethod] = useState("");
   const [deliveryNotes, setDeliveryNotes] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -37,17 +39,17 @@ const Checkout = () => {
         );
         setAddresses(addressResponse.data);
 
-        // Debugging log for addresses
-        console.log("Fetched addresses:", addressResponse.data);
-
         // Fetch payment methods
         const paymentMethodsResponse = await axios.get(
           "http://localhost:5000/api/metode-pembayaran"
         );
         setPaymentMethods(paymentMethodsResponse.data);
 
-        // Debugging log for payment methods
-        console.log("Fetched payment methods:", paymentMethodsResponse.data);
+        // Fetch shipping methods
+        const shippingMethodsResponse = await axios.get(
+          "http://localhost:5000/api/metode-pengiriman"
+        );
+        setShippingMethods(shippingMethodsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -65,13 +67,16 @@ const Checkout = () => {
   const total = subtotal + shippingCost;
 
   const handleCheckout = async () => {
-    if (selectedAddress && selectedPaymentMethod) {
+    if (selectedAddress && selectedPaymentMethod && selectedShippingMethod) {
       try {
+        // Create order
         const orderResponse = await axios.post(
           "http://localhost:5000/api/pesanan",
           {
             id_user: userId,
             total_barang: cartItems.length,
+            subtotal_harga: subtotal,
+            total_pembayaran: total,
             status: "tertunda",
             catatan_pengiriman: deliveryNotes,
           }
@@ -79,11 +84,20 @@ const Checkout = () => {
 
         const orderId = orderResponse.data.pesanan.id_pesanan;
 
+        // Create order details
         await axios.post("http://localhost:5000/api/detail-pesanan", {
           id_pesanan: orderId,
           id_alamat: selectedAddress,
-          id_metode_pengiriman: selectedPaymentMethod,
+          id_metode_pengiriman: selectedShippingMethod,
           kuantitas: cartItems.reduce((acc, item) => acc + item.quantity, 0),
+        });
+
+        // Create payment transaction
+        await axios.post("http://localhost:5000/api/transaksi-pembayaran", {
+          id_pesanan: orderId,
+          id_metode_pembayaran: selectedPaymentMethod,
+          jumlah_bayar: total,
+          status_pembayaran: "pending",
         });
 
         toast.success("Pesanan Anda telah berhasil dilakukan! Silakan periksa riwayat pesanan Anda");
@@ -98,7 +112,7 @@ const Checkout = () => {
         toast.error("Gagal membuat pesanan. Silakan coba lagi.");
       }
     } else {
-      toast.error("Silakan pilih alamat dan metode pembayaran.");
+      toast.error("Silakan pilih alamat, metode pembayaran, dan metode pengiriman.");
     }
   };
 
@@ -198,6 +212,26 @@ const Checkout = () => {
                     ))}
                   </Form.Select>
                 </Form.Group>
+
+                {/* Shipping Method */}
+                <Form.Group className="mb-3" controlId="formShippingMethod">
+                  <Form.Label>Metode Pengiriman</Form.Label>
+                  <Form.Select
+                    value={selectedShippingMethod}
+                    onChange={(e) => setSelectedShippingMethod(e.target.value)}
+                  >
+                    <option value="">Pilih Metode Pengiriman</option>
+                    {shippingMethods.map((method) => (
+                      <option
+                        key={method.id_metode_pengiriman}
+                        value={method.id_metode_pengiriman}
+                      >
+                        {method.nama_metode}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+
                 {/* Delivery Notes */}
                 <Form.Group className="mb-3" controlId="formDeliveryNotes">
                   <Form.Label>Catatan Pengiriman</Form.Label>

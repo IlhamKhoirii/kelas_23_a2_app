@@ -79,7 +79,7 @@ const OrderHistory = () => {
                   <td>{order.id_pesanan}</td>
                   <td>{new Date(order.dibuat_pada).toLocaleDateString()}</td>
                   <td>{order.status}</td>
-                  <td>Rp{order.total_barang.toLocaleString()}</td>
+                  <td>{order.total_barang.toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
