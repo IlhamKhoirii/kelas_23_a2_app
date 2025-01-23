@@ -18,6 +18,7 @@ const NavbarAdmin = ({ handleLogout }) => {
                         <Nav.Link onClick={() => navigate("/admin/orders")}>Pemesanan</Nav.Link>
                         <Nav.Link onClick={() => navigate("/admin/users")}>Pengguna</Nav.Link>
                         <Nav.Link onClick={() => navigate("/admin/sales")}>Laporan Penjualan</Nav.Link>
+                        <Nav.Link onClick={() => navigate("/admin/feedback")}>User Feedback</Nav.Link>
                     </Nav>
                     <Dropdown align="end">
                         <Dropdown.Toggle variant="secondary" id="dropdown-basic">

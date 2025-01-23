@@ -7,6 +7,11 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.admin-order-list .table-responsive {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
 .admin-user-list h2 {
     font-weight: 600;
     color: #333;

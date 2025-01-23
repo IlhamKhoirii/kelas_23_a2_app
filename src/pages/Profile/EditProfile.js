@@ -83,7 +83,7 @@ const EditProfile = () => {
             <Container className="mt-4">
                 <Form onSubmit={handleSave}>
                     <Form.Group className="mb-3" controlId="formUserId">
-                        <Form.Label>User ID (Unique)</Form.Label>
+                        <Form.Label>Id User</Form.Label>
                         <Form.Control type="text" value={userId} readOnly />
                     </Form.Group>
 

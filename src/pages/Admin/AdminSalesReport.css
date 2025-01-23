@@ -1,5 +1,6 @@
 .admin-sales-report {
     margin-top: 20px;
+    color: #333;
 }
 
 .sales-summary {
@@ -9,23 +10,44 @@
 }
 
 .sales-summary .summary-item {
-    background-color: #f8f9fa;
+    background-color: #007bff;
+    color: #fff;
     padding: 15px;
     border-radius: 5px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    margin-right: 10px;
+}
+
+.sales-summary .summary-item:last-child {
+    margin-right: 0;
 }
 
 .filter-form {
     display: flex;
     align-items: center;
+    margin-bottom: 20px;
 }
 
 .filter-form .form-group {
     margin-right: 10px;
 }
 
+.table {
+    width: 100%;
+}
+
 .table th,
 .table td {
     text-align: center;
     vertical-align: middle;
+}
+
+.table th {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 123, 255, 0.1);
 }

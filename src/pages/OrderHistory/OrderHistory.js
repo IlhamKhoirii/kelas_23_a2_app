@@ -69,10 +69,10 @@ const OrderHistory = () => {
             <thead>
               <tr>
                 <th>Order ID</th>
-                <th>Tanggal</th>
+                <th>Tanggal Order</th>
                 <th>Status</th>
+                <th>Produk Dipesan</th>
                 <th>Nama Barang</th>
-                <th>Total Barang</th>
                 <th>Total Harga</th>
               </tr>
             </thead>

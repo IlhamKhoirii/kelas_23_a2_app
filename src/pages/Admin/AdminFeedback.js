@@ -1,5 +1,5 @@
-// src/components/Admin/AdminFeedback.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Container, Table, Navbar, Nav, Dropdown } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -7,34 +7,21 @@ import "./AdminFeedback.css";
 
 const AdminFeedback = () => {
     const navigate = useNavigate();
+    const [feedbackData, setFeedbackData] = useState([]);
 
-    const [feedbackData] = useState([
-        // Mock data for user feedback (in a real app, fetch this data from an API)
-        {
-            id: 1,
-            userId: "U001",
-            username: "john_doe",
-            email: "john.doe@example.com",
-            message: "The website frequently crashes when I try to place an order.",
-        },
-        {
-            id: 2,
-            userId: "U002",
-            username: "jane_smith",
-            email: "jane.smith@example.com",
-            message: "There is an error on the checkout page. I cannot complete my purchase.",
-        },
-        {
-            id: 3,
-            userId: "U003",
-            username: "alice_jones",
-            email: "alice.jones@example.com",
-            message: "The search function does not work properly on mobile devices.",
-        },
-    ]);
+    useEffect(() => {
+        const fetchFeedback = async () => {
+            try {
+                const response = await axios.get("http://localhost:5000/api/feedback");
+                setFeedbackData(response.data);
+            } catch (error) {
+                console.error("Error fetching feedback data:", error);
+            }
+        };
+        fetchFeedback();
+    }, []);
 
     const handleLogout = () => {
-        // Clear authentication and navigate to login
         localStorage.removeItem("authToken");
         navigate("/login");
     };
@@ -81,19 +68,19 @@ const AdminFeedback = () => {
                         <tr>
                             <th>No</th>
                             <th>User ID</th>
-                            <th>Username</th>
+                            <th>Nama User</th>
                             <th>Email</th>
-                            <th>Message</th>
+                            <th>Pesan</th>
                         </tr>
                     </thead>
                     <tbody>
                         {feedbackData.map((feedback, index) => (
-                            <tr key={feedback.id}>
+                            <tr key={feedback.id_feedback}>
                                 <td>{index + 1}</td>
-                                <td>{feedback.userId}</td>
-                                <td>{feedback.username}</td>
+                                <td>{feedback.id_user}</td>
+                                <td>{feedback.nama_user}</td>
                                 <td>{feedback.email}</td>
-                                <td>{feedback.message}</td>
+                                <td>{feedback.pesan}</td>
                             </tr>
                         ))}
                     </tbody>

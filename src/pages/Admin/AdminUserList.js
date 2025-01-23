@@ -120,9 +120,9 @@ const AdminUserList = () => {
             {/* User Management Section */}
             <Container className="mt-4">
                 <h2>Manajemen Pengguna</h2>
-                <Button variant="primary" className="mb-3" onClick={() => handleShowModal()}>
+                {/* <Button variant="primary" className="mb-3" onClick={() => handleShowModal()}>
                     <FaPlus /> Tambah Pengguna
-                </Button>
+                </Button> */}
 
                 {/* Users Table */}
                 <Table striped bordered hover>
